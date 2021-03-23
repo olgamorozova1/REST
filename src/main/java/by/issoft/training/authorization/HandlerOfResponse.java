@@ -1,4 +1,4 @@
-package by.issoft.training;
+package by.issoft.training.authorization;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;

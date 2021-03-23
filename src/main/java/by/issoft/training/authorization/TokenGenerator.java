@@ -1,7 +1,5 @@
-package by.issoft.training;
+package by.issoft.training.authorization;
 
-import by.issoft.training.Constants.Constants;
-import by.issoft.training.Constants.Scope;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.binary.Base64;
@@ -14,10 +12,12 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /*
 In this class we generate token. Singleton pattern is implemented.
@@ -40,23 +40,24 @@ public class TokenGenerator {
     public static TokenGenerator getInstance(Scope scope) {
         if (instance == null || (instance != null && instance.scope != scope)) {
             instance = new TokenGenerator(scope);
-            instance.createAccessToken(scope);
         }
         return instance;
     }
 
-    private String createAccessToken(Scope scope) {
+    public String createAccessToken() {
         String token = null;
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-
-            HttpPost request = new HttpPost(Constants.BASE_URL + "/oauth/token");
-            String auth = Constants.USER_NAME + ":" + Constants.PASSWORD;
+            FileInputStream inputStream = new FileInputStream("src/main/resources/config.properties");
+            Properties properties = new Properties();
+            properties.load(inputStream);
+            HttpPost request = new HttpPost(properties.getProperty("url") + "/oauth/token");
+            String auth = properties.getProperty("user_name") + ":" + properties.getProperty("password");
             byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.ISO_8859_1));
             String authHeader = "Basic " + new String(encodedAuth);
             request.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
             request.setHeader(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded");
             List<NameValuePair> nameValuePair = new ArrayList<>();
-            nameValuePair.add(new BasicNameValuePair("grant_type", Constants.GRANT_TYPE));
+            nameValuePair.add(new BasicNameValuePair("grant_type", properties.getProperty("grant_type")));
             nameValuePair.add(new BasicNameValuePair("scope", scope.getScopeStringValue()));
             request.setEntity(new UrlEncodedFormEntity(nameValuePair));
             ResponseHandler<String> responseHandler = new HandlerOfResponse();
@@ -67,6 +68,7 @@ public class TokenGenerator {
 
         } catch (IOException ex) {
             ex.printStackTrace();
+            System.exit(1);
         }
         System.out.println(token);
         return token;

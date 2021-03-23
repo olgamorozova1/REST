@@ -1,8 +1,8 @@
-package by.issoft.training.Constants;
+package by.issoft.training.authorization;
 
 public enum Scope {
-    READ ("read"),
-    WRITE ("write");
+    READ("read"),
+    WRITE("write");
 
     private String scopeStringValue;
 
