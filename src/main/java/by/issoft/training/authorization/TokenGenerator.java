@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -28,24 +29,23 @@ In this implementation expiration date of token is not taken into account - will
 */
 public class TokenGenerator {
     Scope scope;
+    HashMap<Scope, String> tokensStorage = new HashMap<>();
     //New instance of the class is created
     private static TokenGenerator instance = null;
 
     //Private constructor is created for class
-    private TokenGenerator(Scope scope) {
-        this.scope = scope;
+    private TokenGenerator() {
     }
 
     //Method to create new token if it is not exist or scope of existing token is different
-    public static TokenGenerator getInstance(Scope scope) {
-        if (instance == null || (instance != null && instance.scope != scope)) {
-            instance = new TokenGenerator(scope);
+    public static TokenGenerator getInstance() {
+        if (instance == null || (instance != null)) {
+            instance = new TokenGenerator();
         }
         return instance;
     }
 
-    public String createAccessToken() {
-        String token = null;
+    public HashMap<Scope, String> createAccessToken(Scope scope) {
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             FileInputStream inputStream = new FileInputStream("src/main/resources/config.properties");
             Properties properties = new Properties();
@@ -64,13 +64,13 @@ public class TokenGenerator {
             String httpResponse = httpclient.execute(request, responseHandler);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode node = mapper.readTree(httpResponse);
-            token = node.get("access_token").asText();
+            String token = node.get("access_token").asText();
+            tokensStorage.put(scope, token);
 
         } catch (IOException ex) {
             ex.printStackTrace();
             System.exit(1);
         }
-        System.out.println(token);
-        return token;
+        return tokensStorage;
     }
 }
