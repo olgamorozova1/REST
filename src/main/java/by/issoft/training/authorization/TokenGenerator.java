@@ -37,9 +37,9 @@ public class TokenGenerator {
     private TokenGenerator() {
     }
 
-    //Method to create new token if it is not exist or scope of existing token is different
+    //Method to create new token if it does not exist
     public static TokenGenerator getInstance() {
-        if (instance == null || (instance != null)) {
+        if (instance == null) {
             instance = new TokenGenerator();
         }
         return instance;
