@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
+import static by.issoft.training.utils.PropertiesReader.readInfoFromProperties;
+
 /*
 In this class we generate token. Singleton pattern is implemented.
 Lazy Initialization is used as we need to get token in time when we make a response and going to use it.
@@ -47,9 +49,7 @@ public class TokenGenerator {
 
     public HashMap<Scope, String> createAccessToken(Scope scope) {
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-            FileInputStream inputStream = new FileInputStream("src/main/resources/config.properties");
-            Properties properties = new Properties();
-            properties.load(inputStream);
+            Properties properties = readInfoFromProperties();
             HttpPost request = new HttpPost(properties.getProperty("url") + "/oauth/token");
             String auth = properties.getProperty("user_name") + ":" + properties.getProperty("password");
             byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.ISO_8859_1));
@@ -66,7 +66,6 @@ public class TokenGenerator {
             JsonNode node = mapper.readTree(httpResponse);
             String token = node.get("access_token").asText();
             tokensStorage.put(scope, token);
-
         } catch (IOException ex) {
             ex.printStackTrace();
             System.exit(1);

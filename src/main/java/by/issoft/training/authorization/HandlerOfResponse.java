@@ -18,7 +18,7 @@ public class HandlerOfResponse implements ResponseHandler<String> {
             if (responseBodyEntity == null) {
                 throw new ClientProtocolException("Response contains no content");
             } else {
-                return EntityUtils.toString(responseBodyEntity);
+                return EntityUtils.toString(responseBodyEntity) + " Response code: " + String.valueOf(status);
             }
         } else {
             throw new HttpResponseException(
