@@ -1,15 +1,17 @@
 package by.issoft.training.test;
 
+import by.issoft.training.objects.User;
 import by.issoft.training.requests.GetRequest;
 import by.issoft.training.requests.PostRequest;
 
+import by.issoft.training.utils.JsonConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.*;;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ZipCodesTest {
+public class Task20ZipCodesTest {
     PostRequest postRequest = new PostRequest();
     GetRequest getRequest = new GetRequest();
 
@@ -44,9 +46,9 @@ public class ZipCodesTest {
     @Order(3)
     void postDuplicatedZipCode() {
         String existingZipCodes = StringUtils.substringBetween(getRequest.executeRequest("/zip-codes"), "[", "]");
-        String newZipCode = "12345";
+        String existingZipCode = StringUtils.substringBetween(existingZipCodes, "\"", "\"");
         postRequest.setRequestBody("[\n" +
-                "  \"" + newZipCode + "\"\n" +
+                "  \"" + existingZipCode + "\"\n" +
                 "]");
         String response = postRequest.executeRequest("/zip-codes/expand");
         String responseCode = StringUtils.substringAfter(response, "Response code: ");
@@ -59,13 +61,10 @@ public class ZipCodesTest {
     @Test
     @Order(4)
     void postAlreadyUsedZipCode() {
-        String usedZipCode = "ABCDE";
-        postRequest.setRequestBody("{\n" +
-                "  \"age\": 0,\n" +
-                "  \"name\": \"string\",\n" +
-                "  \"sex\": \"FEMALE\",\n" +
-                "  \"zipCode\": \"" + usedZipCode + "\"\n" +
-                "}");
+        String zipCodesResponse = getRequest.executeRequest("/zip-codes");
+        String usedZipCode = StringUtils.substringBetween(zipCodesResponse, "\"", "\"");
+        User user = new User(20, "Alex", "MALE", usedZipCode);
+        postRequest.setRequestBody(JsonConverter.convertObjectToJson(user));
         postRequest.executeRequest("/users");
         String existingZipCodes = StringUtils.substringBetween(getRequest.executeRequest("/zip-codes"), "[", "]");
         PostRequest postRequest2 = new PostRequest();

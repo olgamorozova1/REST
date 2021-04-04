@@ -1,0 +1,34 @@
+1. User with same name ans sex could be added to the application.
+Precondition:
+Start application.
+Steps to reproduce:
+1. Send POST request to get access token with read scope to endpoint /oauth/token:
+POST http://localhost:49000/oauth/token
+Header:
+Authorization: Basic MG9hMTU3dHZ0dWdmRlhFaFU0eDc6WDdlQkNYcWxGQzd4LW1qeEc1SDkxSVJ2X0JxZTFvcTdad1hOQThhcQ==
+Request Body:
+grant_type: "client_credentials"
+scope: "read"
+2. Send POST request to get access token with "write" scope to endpoint /oauth/token.
+3. Send GET request to /zip-codes to retrieve available zip codes:
+   GET http://localhost:49000/zip-codes
+   Header:
+   Authorization: Bearer XXXX
+   (where XXXX is token from the 1st step)
+4. Send POST request to add user with one of the ZIP codes from previous step (use token with "write" scope).
+   POST http://localhost:49000/users
+   Header:
+   Authorization: Bearer XXXX
+   Content-Type: application/json
+   Request Body:
+   {
+     "age": 20,
+     "name": "ola",
+     "sex": "FEMALE",
+     "zipCode": "ABCDE"
+   }
+5. Send another POST request to create user with same name and sex but different zipCode.
+6. Verify response code.
+7. Send GET request to /users endpoint to verify whether duplicated user was added to the application.
+Actual result: response code is 201. Duplicated user is added to the application.
+Expected result: response code is 400. Duplicated user is not added to the application.
