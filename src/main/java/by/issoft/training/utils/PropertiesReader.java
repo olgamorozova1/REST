@@ -5,12 +5,11 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class PropertiesReader {
-    static Properties properties;
 
-    public static Properties readInfoFromProperties() throws IOException {
+    public static String readInfoFromProperties(String propertyName) throws IOException {
         FileInputStream inputStream = new FileInputStream("src/main/resources/config.properties");
-        properties = new Properties();
+        Properties properties = new Properties();
         properties.load(inputStream);
-        return properties;
+        return properties.getProperty(propertyName);
     }
 }
