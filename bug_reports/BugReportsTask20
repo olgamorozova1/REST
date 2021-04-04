@@ -28,13 +28,15 @@ Header:
 Authorization: Basic MG9hMTU3dHZ0dWdmRlhFaFU0eDc6WDdlQkNYcWxGQzd4LW1qeEc1SDkxSVJ2X0JxZTFvcTdad1hOQThhcQ==
 Request Body:
 grant_type: "client_credentials"
-scope: "write"
-2. Send GET request to /zip-codes:
+scope: "read"
+2. Send GET request to /zip-codes to receive all available zip codes:
 GET http://localhost:49000/zip-codes
 Header:
 Authorization: Bearer XXXX
 (where XXXX is token from the 1st step)
-3. Send POST request to the endpoint /zip-codes/expand with ZIP code value from response from previous step:
+3. Send POST request to get access token with "write" scope to endpoint /oauth/token.
+4. Send POST request to the endpoint /zip-codes/expand with ZIP code value from response from step 2 (use token with "write" scope),
+for example "12345":
 POST http://localhost:49000/zip-codes/expand
 Authorization: Bearer XXXX
 Content-Type: application/json
@@ -56,13 +58,14 @@ Header:
 Authorization: Basic MG9hMTU3dHZ0dWdmRlhFaFU0eDc6WDdlQkNYcWxGQzd4LW1qeEc1SDkxSVJ2X0JxZTFvcTdad1hOQThhcQ==
 Request Body:
 grant_type: "client_credentials"
-scope: "write"
+scope: "read"
 2. GET request to /zip-codes to retrieve all available ZIP codes.
 GET http://localhost:49000/zip-codes
 Header:
 Authorization: Bearer XXXX
 (where XXXX is token from the 1st step)
-3. Send POST request to add user with one of the ZIP codes from previous step.
+3. Send POST request to get access token with "write" scope to endpoint /oauth/token.
+4. Send POST request to add user with one of the ZIP codes from previous step (use token with "write" scope).
 POST http://localhost:49000/users
 Header:
 Authorization: Bearer XXXX

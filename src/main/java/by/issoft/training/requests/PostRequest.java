@@ -22,7 +22,7 @@ public class PostRequest extends Request {
 
     public String executeRequest(String path) {
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-            HttpPost postRequest = new HttpPost(readInfoFromProperties().getProperty("url") + path);
+            HttpPost postRequest = new HttpPost(readInfoFromProperties("url") + path);
             getToken(Scope.WRITE);
             postRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
             postRequest.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");

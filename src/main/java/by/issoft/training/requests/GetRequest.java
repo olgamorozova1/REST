@@ -16,7 +16,7 @@ public class GetRequest extends Request{
 
     public String executeRequest(String path) {
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-            HttpGet getRequest = new HttpGet(readInfoFromProperties().getProperty("url") + path);
+            HttpGet getRequest = new HttpGet(readInfoFromProperties("url") + path);
             getToken(Scope.READ);
             getRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
             ResponseHandler<String> responseHandler= new HandlerOfResponse();;
