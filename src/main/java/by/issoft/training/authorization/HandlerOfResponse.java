@@ -13,12 +13,12 @@ public class HandlerOfResponse implements ResponseHandler<String> {
     @Override
     public String handleResponse(final HttpResponse response) throws IOException {
         int status = response.getStatusLine().getStatusCode();
-        if (status >= 200 && status < 500) {
+        if (status >= 200 && status < 400) {
             HttpEntity responseBodyEntity = response.getEntity();
             if (responseBodyEntity == null) {
                 throw new ClientProtocolException("Response contains no content");
             } else {
-                return EntityUtils.toString(responseBodyEntity) + " Response code: " + String.valueOf(status);
+                return EntityUtils.toString(responseBodyEntity);
             }
         } else {
             throw new HttpResponseException(

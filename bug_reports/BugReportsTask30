@@ -30,5 +30,5 @@ scope: "read"
 5. Send another POST request to create user with same name and sex but different zipCode.
 6. Verify response code.
 7. Send GET request to /users endpoint to verify whether duplicated user was added to the application.
-Actual result: response code is 201. Duplicated user is added to the application.
-Expected result: response code is 400. Duplicated user is not added to the application.
+Actual result: response code is 201. Duplicated userDto is added to the application.
+Expected result: response code is 400. Duplicated userDto is not added to the application.

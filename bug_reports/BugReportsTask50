@@ -1,0 +1,38 @@
+1. Updated user is deleted if PUT/PATCH call fails with 424 or 409 error.
+Precondition:
+Start application.
+Get access tokens with 'write' and 'read' scope.
+   POST http://localhost:49000/oauth/token
+   Header:
+   Authorization: Basic MG9hMTU3dHZ0dWdmRlhFaFU0eDc6WDdlQkNYcWxGQzd4LW1qeEc1SDkxSVJ2X0JxZTFvcTdad1hOQThhcQ==
+   Request Body:
+   grant_type: "client_credentials"
+   scope: "write"
+Steps to reproduce:
+1. Create user.
+   POST http://localhost:49000/users
+   Header:
+   Authorization: Bearer XXXX
+   Content-Type: application/json
+   Request Body:
+   {
+     "age": 20,
+     "name": "ola",
+     "sex": "FEMALE",
+     "zipCode": "ABCDE"
+   }
+2. Send PUT/PATCH request to update user: set age, name and sex valid but ZIP code should be incorrect (does not exist in application).
+   PUT http://localhost:49000/users
+   Header:
+   Authorization: Bearer XXXX
+   Content-Type: application/json
+   Request Body:
+   {
+     "age": 20,
+     "name": "ola",
+     "sex": "FEMALE",
+     "zipCode": "test"
+   }
+3. Verify user is not updated with GET request to /users endpoint (use auth token with 'read' scope).
+Actual result: If request fails with 409 or 424 updated user is deleted.
+Expected result: updated user should not be deleted.

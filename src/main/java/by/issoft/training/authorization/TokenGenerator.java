@@ -15,10 +15,7 @@ import org.apache.http.message.BasicNameValuePair;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import static by.issoft.training.utils.PropertiesReader.readInfoFromProperties;
 
@@ -31,7 +28,7 @@ In this implementation expiration date of token is not taken into account - will
 */
 public class TokenGenerator {
     Scope scope;
-    HashMap<Scope, String> tokensStorage = new HashMap<>();
+    Map<Scope, String> tokensStorage = new HashMap<>();
     //New instance of the class is created
     private static TokenGenerator instance = null;
 
@@ -47,28 +44,28 @@ public class TokenGenerator {
         return instance;
     }
 
-    public HashMap<Scope, String> createAccessToken(Scope scope) {
-        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-            Properties properties = readInfoFromProperties();
-            HttpPost request = new HttpPost(properties.getProperty("url") + "/oauth/token");
-            String auth = properties.getProperty("user_name") + ":" + properties.getProperty("password");
-            byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.ISO_8859_1));
-            String authHeader = "Basic " + new String(encodedAuth);
-            request.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
-            request.setHeader(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded");
-            List<NameValuePair> nameValuePair = new ArrayList<>();
-            nameValuePair.add(new BasicNameValuePair("grant_type", properties.getProperty("grant_type")));
-            nameValuePair.add(new BasicNameValuePair("scope", scope.getScopeStringValue()));
-            request.setEntity(new UrlEncodedFormEntity(nameValuePair));
-            ResponseHandler<String> responseHandler = new HandlerOfResponse();
-            String httpResponse = httpclient.execute(request, responseHandler);
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode node = mapper.readTree(httpResponse);
-            String token = node.get("access_token").asText();
-            tokensStorage.put(scope, token);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            System.exit(1);
+    public Map<Scope, String> createAccessToken(Scope scope) {
+        if (!tokensStorage.containsKey(scope)) {
+            try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+                HttpPost request = new HttpPost(readInfoFromProperties("url") + "/oauth/token");
+                String auth = readInfoFromProperties("user_name") + ":" + readInfoFromProperties("password");
+                byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.ISO_8859_1));
+                String authHeader = "Basic " + new String(encodedAuth);
+                request.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
+                request.setHeader(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded");
+                List<NameValuePair> nameValuePair = new ArrayList<>();
+                nameValuePair.add(new BasicNameValuePair("grant_type", readInfoFromProperties("grant_type")));
+                nameValuePair.add(new BasicNameValuePair("scope", scope.getScopeStringValue()));
+                request.setEntity(new UrlEncodedFormEntity(nameValuePair));
+                ResponseHandler<String> responseHandler = new HandlerOfResponse();
+                String httpResponse = httpclient.execute(request, responseHandler);
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode node = mapper.readTree(httpResponse);
+                String token = node.get("access_token").asText();
+                tokensStorage.put(scope, token);
+            } catch (IOException ex) {
+                throw new RuntimeException("Authorization failed!");
+            }
         }
         return tokensStorage;
     }

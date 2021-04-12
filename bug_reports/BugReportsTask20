@@ -65,8 +65,8 @@ Header:
 Authorization: Bearer XXXX
 (where XXXX is token from the 1st step)
 3. Send POST request to get access token with "write" scope to endpoint /oauth/token.
-4. Send POST request to add user with one of the ZIP codes from previous step (use token with "write" scope).
-POST http://localhost:49000/users
+4. Send POST request to add userDto with one of the ZIP codes from previous step (use token with "write" scope).
+POST http://localhost:49000/userDtos
 Header:
 Authorization: Bearer XXXX
 Content-Type: application/json
