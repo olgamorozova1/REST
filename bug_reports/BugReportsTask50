@@ -1,4 +1,22 @@
-1. Updated user is deleted if PUT/PATCH call fails with 424 or 409 error.
+1. PATCH call updates user entirely instead of updating only specified value.
+Precondition:
+Start application.
+Get access tokens with 'write' and 'read' scope.
+Steps to reproduce:
+1. Send POST request to create user to /users endpoint with body.
+{
+     "age": 20,
+     "name": "Ola",
+     "sex": "FEMALE",
+     "zipCode": "ABCDE"
+}
+2. Send PATCH request to update age:
+{"userNewValues":{"age":21},"userToChange":{"age":20,"name":"Ola","sex":"FEMALE","zipCode":"ABCDE"}}
+3. Verify response.
+Actual result: 409 error is received, user is not updated.
+Expected result: 200 response code is received, user's age is updated.
+________________________________________________________________________
+2. Updated user is deleted if PUT/PATCH call fails with 424 or 409 error.
 Precondition:
 Start application.
 Get access tokens with 'write' and 'read' scope.

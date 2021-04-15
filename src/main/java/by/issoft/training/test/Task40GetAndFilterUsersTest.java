@@ -1,21 +1,21 @@
 package by.issoft.training.test;
 
 import by.issoft.training.objects.UserDto;
-import by.issoft.training.requests.GetParameters;
+import by.issoft.training.requests.ParametersForGetRequest;
 import org.junit.jupiter.api.*;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class Task40GetAndFilterUsersTest extends BaseTest {
     static UserDto user1;
     static UserDto user2;
     static UserDto user3;
-    UserDto[] expectedUsers;
-    UserDto[] actualUsers;
+    List<UserDto> expectedUsers = new ArrayList<>();
+    List<UserDto> actualUsers = new ArrayList<>();
 
     @BeforeAll
     public static void prepareData() {
@@ -28,52 +28,52 @@ public class Task40GetAndFilterUsersTest extends BaseTest {
     }
 
     @Test
-    @Order(1)
     public void getUsers() {
-        expectedUsers = new UserDto[]{user1, user2, user3};
+        expectedUsers.add(user1);
+        expectedUsers.add(user2);
+        expectedUsers.add(user3);
         actualUsers = userClient.getUsers();
         Assertions.assertAll(
                 () -> assertEquals(200, userClient.getUsersResponse().getStatusLine().getStatusCode()),
-                () -> assertTrue(Arrays.equals(expectedUsers, actualUsers)));
+                () -> assertTrue(actualUsers.containsAll(expectedUsers)));
     }
 
     @Test
-    @Order(2)
     public void getUsersOlderThan() {
-        expectedUsers = new UserDto[]{user3};
-        actualUsers = userClient.getUsers(GetParameters.OlDER_THAN, "20");
+        expectedUsers.add(user2);
+        expectedUsers.add(user3);
+        actualUsers = userClient.getUsers(ParametersForGetRequest.OLDER_THAN, 20);
         Assertions.assertAll(
                 () -> assertEquals(200, userClient
-                        .getUsersResponse(GetParameters.OlDER_THAN, "20")
+                        .getUsersResponse(ParametersForGetRequest.OLDER_THAN, 20)
                         .getStatusLine()
                         .getStatusCode()),
-                () -> assertTrue(Arrays.equals(expectedUsers, actualUsers)));
+                () -> assertTrue(actualUsers.containsAll(expectedUsers)));
     }
 
     @Test
-    @Order(3)
     public void getUsersYoungerThan() {
-        expectedUsers = new UserDto[]{user2};
-        actualUsers = userClient.getUsers(GetParameters.YOUNGER_THAN, "20");
+        expectedUsers.add(user2);
+        actualUsers = userClient.getUsers(ParametersForGetRequest.YOUNGER_THAN, 20);
         Assertions.assertAll(
                 () -> assertEquals(200, userClient
-                        .getUsersResponse(GetParameters.YOUNGER_THAN, "20")
+                        .getUsersResponse(ParametersForGetRequest.YOUNGER_THAN, 20)
                         .getStatusLine()
                         .getStatusCode()),
-                () -> assertTrue(Arrays.equals(expectedUsers, actualUsers)));
+                () -> assertTrue(actualUsers.containsAll(expectedUsers)));
     }
 
     @Test
-    @Order(4)
     public void getUsersBySex() {
-        expectedUsers = new UserDto[]{user2, user3};
-        actualUsers = userClient.getUsers(GetParameters.SEX, "FEMALE");
+        expectedUsers.add(user2);
+        expectedUsers.add(user3);
+        actualUsers = userClient.getUsers(ParametersForGetRequest.SEX, "FEMALE");
         Assertions.assertAll(
                 () -> assertEquals(200, userClient
-                        .getUsersResponse(GetParameters.SEX, "FEMALE")
+                        .getUsersResponse(ParametersForGetRequest.SEX, "FEMALE")
                         .getStatusLine()
                         .getStatusCode()),
-                () -> assertTrue(Arrays.equals(expectedUsers, actualUsers)));
+                () -> assertTrue(actualUsers.containsAll(expectedUsers)));
     }
 }
 

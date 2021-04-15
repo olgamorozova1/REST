@@ -15,6 +15,10 @@ import static by.issoft.training.utils.PropertiesReader.readInfoFromProperties;
 public class Put extends Request {
     private String requestBody;
 
+    public Put(Scope scope) {
+        super(scope);
+    }
+
     public void setRequestBody(String requestBody) {
         this.requestBody = requestBody;
     }
@@ -23,7 +27,7 @@ public class Put extends Request {
 
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             HttpPut putRequest = new HttpPut(readInfoFromProperties("url") + path);
-            getToken(Scope.WRITE);
+            getToken();
             putRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
             putRequest.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
             StringEntity entity = new StringEntity(requestBody);

@@ -12,18 +12,21 @@ import java.io.IOException;
 
 import static by.issoft.training.utils.PropertiesReader.readInfoFromProperties;
 
-public class Patch extends Request{
+public class Patch extends Request {
     private String requestBody;
+
+    public Patch(Scope scope) {
+        super(scope);
+    }
 
     public void setRequestBody(String requestBody) {
         this.requestBody = requestBody;
     }
 
     public CloseableHttpResponse executeRequest(String path) {
-
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             HttpPatch patchRequest = new HttpPatch(readInfoFromProperties("url") + path);
-            getToken(Scope.WRITE);
+            getToken();
             patchRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
             patchRequest.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
             StringEntity entity = new StringEntity(requestBody);

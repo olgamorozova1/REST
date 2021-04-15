@@ -1,12 +1,12 @@
 package by.issoft.training.requests;
 
-public enum GetParameters {
-    OlDER_THAN("olderThan"),
+public enum ParametersForGetRequest {
+    OLDER_THAN("olderThan"),
     YOUNGER_THAN("youngerThan"),
     SEX("sex");
     private String paramStringValue;
 
-    GetParameters(String paramStringValue) {
+    ParametersForGetRequest(String paramStringValue) {
         this.paramStringValue = paramStringValue;
     }
 

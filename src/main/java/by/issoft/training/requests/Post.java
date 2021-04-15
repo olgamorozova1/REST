@@ -15,6 +15,10 @@ import static by.issoft.training.utils.PropertiesReader.readInfoFromProperties;
 public class Post extends Request {
     private String requestBody;
 
+    public Post(Scope scope) {
+        super(scope);
+    }
+
     public void setRequestBody(String requestBody) {
         this.requestBody = requestBody;
     }
@@ -23,7 +27,7 @@ public class Post extends Request {
 
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             HttpPost postRequest = new HttpPost(readInfoFromProperties("url") + path);
-            getToken(Scope.WRITE);
+            getToken();
             postRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
             postRequest.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
             StringEntity entity = new StringEntity(requestBody);

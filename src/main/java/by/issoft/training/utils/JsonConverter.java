@@ -1,41 +1,63 @@
 package by.issoft.training.utils;
 
-import by.issoft.training.objects.UpdateUserDto;
-import by.issoft.training.objects.UserDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.HttpEntity;
+import org.apache.http.util.EntityUtils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 public class JsonConverter {
     static ObjectMapper mapper = new ObjectMapper();
 
-    public static String convertObjectToJson(UserDto userDto) {
+    public static String convertObjectToJson(Object user) {
         String json = null;
         try {
-            json = mapper.writeValueAsString(userDto);
+            json = mapper.writeValueAsString(user);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
         return json;
     }
 
-    public static String convertObjectToJson(UpdateUserDto updateUserDto) {
-        String json = null;
+    public static <T> List<T> convertJsonToObject(String json, Class<T> tClass) {
+        List<T> listOfObjects = null;
         try {
-            json = mapper.writeValueAsString(updateUserDto);
+            listOfObjects = mapper.readValue(json, mapper
+                    .getTypeFactory()
+                    .constructCollectionType(List.class, tClass));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        return json;
+        return listOfObjects;
     }
 
-    public static UserDto[] convertJsonToObject(String json) {
-        UserDto[] userDtos = null;
+    public static <T> List<T> convertHttpEntityToObject(HttpEntity responseBodyEntity, Class<T> tClass) {
+        List<T> listOfObjects = null;
         try {
-            userDtos = mapper.readValue(json, UserDto[].class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            String responseBodyString = EntityUtils.toString(responseBodyEntity);
+            listOfObjects = mapper.readValue(responseBodyString, mapper
+                    .getTypeFactory()
+                    .constructCollectionType(List.class, tClass));
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
         }
-        return userDtos;
+        return listOfObjects;
+    }
+
+    public static String convertListOfStringsToJson(List<String> listOfStrings) {
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        String json = null;
+        try {
+            mapper.writeValue(byteArrayOutputStream, listOfStrings);
+            byte[] data = byteArrayOutputStream.toByteArray();
+            json = new String(data, StandardCharsets.UTF_8);
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+        return json;
     }
 }

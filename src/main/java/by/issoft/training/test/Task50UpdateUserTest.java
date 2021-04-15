@@ -3,6 +3,7 @@ package by.issoft.training.test;
 
 import by.issoft.training.objects.UpdateUserDto;
 import by.issoft.training.objects.UserDto;
+import by.issoft.training.utils.StringGenerator;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,16 +13,14 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static by.issoft.training.test.BaseTest.userClient;
-import static by.issoft.training.test.BaseTest.zipCodesClient;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class Task50UpdateUserTest {
+public class Task50UpdateUserTest extends BaseTest {
     UserDto userBeforeUpdate;
     UserDto userAfterUpdate;
     UpdateUserDto updateUserDto;
     List<String> listOfZipCodes = new ArrayList<>();
-    String zipCode = "111111";
+    String zipCode = StringGenerator.generateZipCode();
 
     @BeforeEach
     public void prepareData() {
@@ -33,28 +32,27 @@ public class Task50UpdateUserTest {
 
     @Test
     public void updateUserEntirely() {
-        String listOfZipCodes = zipCodesClient.getZipCodes();
-        String zipCodeToCreateUser = zipCodesClient.retrieveAnyOfAvailableZipCodes(listOfZipCodes);
-        userAfterUpdate = new UserDto(17, "Arya Stark", "FEMALE", zipCodeToCreateUser);
+        List<String> listOfZipCodes = zipCodesClient.getZipCodes();
+        userAfterUpdate = new UserDto(17, "Arya Stark", "FEMALE", listOfZipCodes.get(0));
         updateUserDto = new UpdateUserDto(userAfterUpdate, userBeforeUpdate);
         CloseableHttpResponse updateResponse = userClient.updateUserEntirely(updateUserDto);
-        UserDto[] users = userClient.getUsers();
+        List<UserDto> users = userClient.getUsers();
         Assertions.assertAll(
                 () -> assertEquals(200, updateResponse.getStatusLine().getStatusCode()),
-                () -> assertTrue(userClient.checkIfUserExistInArray(users, userAfterUpdate)),
-                () -> assertFalse(userClient.checkIfUserExistInArray(users, userBeforeUpdate)));
+                () -> assertTrue(users.contains(userAfterUpdate)),
+                () -> assertFalse(users.contains(userBeforeUpdate)));
     }
 
     @Test
     public void updateUserEntirelyToUserWithInvalidZipCode() {
-        userAfterUpdate = new UserDto(19, "Sansa Stark", "FEMALE", "IncorrectZipCode");
+        userAfterUpdate = new UserDto(19, "Sansa Stark", "FEMALE", StringGenerator.generateZipCode());
         updateUserDto = new UpdateUserDto(userAfterUpdate, userBeforeUpdate);
         CloseableHttpResponse updateResponse = userClient.updateUserEntirely(updateUserDto);
-        UserDto[] users = userClient.getUsers();
+        List<UserDto> users = userClient.getUsers();
         Assertions.assertAll(
                 () -> assertEquals(424, updateResponse.getStatusLine().getStatusCode()),
-                () -> assertTrue(userClient.checkIfUserExistInArray(users, userBeforeUpdate)),
-                () -> assertFalse(userClient.checkIfUserExistInArray(users, userAfterUpdate)));
+                () -> assertTrue(users.contains(userBeforeUpdate)),
+                () -> assertFalse(users.contains(userAfterUpdate)));
     }
 
     @Test
@@ -65,11 +63,11 @@ public class Task50UpdateUserTest {
         userAfterUpdate.setZipCode(zipCode);
         updateUserDto = new UpdateUserDto(userAfterUpdate, userBeforeUpdate);
         CloseableHttpResponse updateResponse = userClient.updateUserEntirely(updateUserDto);
-        UserDto[] users = userClient.getUsers();
+        List<UserDto> users = userClient.getUsers();
         Assertions.assertAll(
                 () -> assertEquals(409, updateResponse.getStatusLine().getStatusCode()),
-                () -> assertTrue(userClient.checkIfUserExistInArray(users, userBeforeUpdate)),
-                () -> assertFalse(userClient.checkIfUserExistInArray(users, userAfterUpdate)));
+                () -> assertTrue(users.contains(userBeforeUpdate)),
+                () -> assertFalse(users.contains(userAfterUpdate)));
     }
 
     @Test
@@ -80,11 +78,11 @@ public class Task50UpdateUserTest {
         userAfterUpdate.setZipCode(zipCode);
         updateUserDto = new UpdateUserDto(userAfterUpdate, userBeforeUpdate);
         CloseableHttpResponse updateResponse = userClient.updateUserEntirely(updateUserDto);
-        UserDto[] users = userClient.getUsers();
+        List<UserDto> users = userClient.getUsers();
         Assertions.assertAll(
                 () -> assertEquals(409, updateResponse.getStatusLine().getStatusCode()),
-                () -> assertTrue(userClient.checkIfUserExistInArray(users, userBeforeUpdate)),
-                () -> assertFalse(userClient.checkIfUserExistInArray(users, userAfterUpdate)));
+                () -> assertTrue(users.contains(userBeforeUpdate)),
+                () -> assertFalse(users.contains(userAfterUpdate)));
     }
 
     @Test
@@ -92,23 +90,25 @@ public class Task50UpdateUserTest {
         userAfterUpdate = new UserDto(27, "Jon Snow", "MALE", zipCode);
         updateUserDto = new UpdateUserDto(userAfterUpdate, userBeforeUpdate);
         CloseableHttpResponse updateResponse = userClient.updateUserPartially(updateUserDto);
-        UserDto[] users = userClient.getUsers();
+        List<UserDto> users = userClient.getUsers();
         Assertions.assertAll(
                 () -> assertEquals(200, updateResponse.getStatusLine().getStatusCode()),
-                () -> assertTrue(userClient.checkIfUserExistInArray(users, userAfterUpdate)),
-                () -> assertFalse(userClient.checkIfUserExistInArray(users, userBeforeUpdate)));
+                () -> assertTrue(users.contains(userAfterUpdate)),
+                () -> assertFalse(users.contains(userBeforeUpdate)));
     }
+
     @Test
     public void updateUserPartiallyToUserWithInvalidZipCode() {
-        userAfterUpdate = new UserDto(19, "Jon Snow", "MALE", "IncorrectZipCode");
+        userAfterUpdate = new UserDto(19, "Jon Snow", "MALE", StringGenerator.generateZipCode());
         updateUserDto = new UpdateUserDto(userAfterUpdate, userBeforeUpdate);
         CloseableHttpResponse updateResponse = userClient.updateUserPartially(updateUserDto);
-        UserDto[] users = userClient.getUsers();
+        List<UserDto> users = userClient.getUsers();
         Assertions.assertAll(
                 () -> assertEquals(424, updateResponse.getStatusLine().getStatusCode()),
-                () -> assertTrue(userClient.checkIfUserExistInArray(users, userBeforeUpdate)),
-                () -> assertFalse(userClient.checkIfUserExistInArray(users, userAfterUpdate)));
+                () -> assertTrue(users.contains(userBeforeUpdate)),
+                () -> assertFalse(users.contains(userAfterUpdate)));
     }
+
     @Test
     public void updateUserPartiallyToUserWithoutNameField() {
         userAfterUpdate = new UserDto();
@@ -117,12 +117,13 @@ public class Task50UpdateUserTest {
         userAfterUpdate.setZipCode(zipCode);
         updateUserDto = new UpdateUserDto(userAfterUpdate, userBeforeUpdate);
         CloseableHttpResponse updateResponse = userClient.updateUserPartially(updateUserDto);
-        UserDto[] users = userClient.getUsers();
+        List<UserDto> users = userClient.getUsers();
         Assertions.assertAll(
                 () -> assertEquals(409, updateResponse.getStatusLine().getStatusCode()),
-                () -> assertTrue(userClient.checkIfUserExistInArray(users, userBeforeUpdate)),
-                () -> assertFalse(userClient.checkIfUserExistInArray(users, userAfterUpdate)));
+                () -> assertTrue(users.contains(userBeforeUpdate)),
+                () -> assertFalse(users.contains(userAfterUpdate)));
     }
+
     @Test
     public void updateUserPartiallyToUserWithoutSexField() {
         userAfterUpdate = new UserDto();
@@ -131,10 +132,10 @@ public class Task50UpdateUserTest {
         userAfterUpdate.setZipCode(zipCode);
         updateUserDto = new UpdateUserDto(userAfterUpdate, userBeforeUpdate);
         CloseableHttpResponse updateResponse = userClient.updateUserPartially(updateUserDto);
-        UserDto[] users = userClient.getUsers();
+        List<UserDto> users = userClient.getUsers();
         Assertions.assertAll(
                 () -> assertEquals(409, updateResponse.getStatusLine().getStatusCode()),
-                () -> assertTrue(userClient.checkIfUserExistInArray(users, userBeforeUpdate)),
-                () -> assertFalse(userClient.checkIfUserExistInArray(users, userAfterUpdate)));
+                () -> assertTrue(users.contains(userBeforeUpdate)),
+                () -> assertFalse(users.contains(userAfterUpdate)));
     }
 }

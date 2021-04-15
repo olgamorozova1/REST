@@ -14,13 +14,17 @@ import java.net.URISyntaxException;
 import static by.issoft.training.utils.PropertiesReader.readInfoFromProperties;
 
 public class Get extends Request {
+    HttpGet getRequest;
+
+    public Get(Scope scope) {
+        super(scope);
+    }
 
     public CloseableHttpResponse executeRequest(String path) {
         try {
             CloseableHttpClient httpclient = HttpClients.createDefault();
-            HttpGet getRequest = new HttpGet(readInfoFromProperties("url") + path);
-            getToken(Scope.READ);
-            getRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
+            getRequest = new HttpGet(readInfoFromProperties("url") + path);
+            setAuthHeader();
             response = httpclient.execute(getRequest);
         } catch (IOException ioException) {
             ioException.printStackTrace();
@@ -28,18 +32,36 @@ public class Get extends Request {
         return response;
     }
 
-    public CloseableHttpResponse executeRequest(String path, GetParameters parameter, String value) {
+    public CloseableHttpResponse executeRequest(String path, ParametersForGetRequest parameter, String value) {
         try {
             CloseableHttpClient httpclient = HttpClients.createDefault();
             URIBuilder builder = new URIBuilder(readInfoFromProperties("url") + path);
             builder.setParameter(parameter.getParamStringValue(), value);
-            HttpGet getRequest = new HttpGet(builder.build());
-            getToken(Scope.READ);
-            getRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
+            getRequest = new HttpGet(builder.build());
+            setAuthHeader();
             response = httpclient.execute(getRequest);
         } catch (IOException | URISyntaxException ioException) {
             ioException.printStackTrace();
         }
         return response;
+    }
+
+    public CloseableHttpResponse executeRequest(String path, ParametersForGetRequest parameter, int value) {
+        try {
+            CloseableHttpClient httpclient = HttpClients.createDefault();
+            URIBuilder builder = new URIBuilder(readInfoFromProperties("url") + path);
+            builder.setParameter(parameter.getParamStringValue(), Integer.toString(value));
+            getRequest = new HttpGet(builder.build());
+            setAuthHeader();
+            response = httpclient.execute(getRequest);
+        } catch (IOException | URISyntaxException ioException) {
+            ioException.printStackTrace();
+        }
+        return response;
+    }
+
+    public void setAuthHeader() {
+        getToken();
+        getRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
     }
 }

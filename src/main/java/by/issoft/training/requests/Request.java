@@ -9,10 +9,15 @@ import java.util.Map;
 public abstract class Request {
     CloseableHttpResponse response;
     String authHeader;
+    Scope scope;
+
+    public Request(Scope scope) {
+        this.scope = scope;
+    }
 
     public abstract CloseableHttpResponse executeRequest(String path);
 
-    public String getToken(Scope scope) {
+    public String getToken() {
         TokenGenerator tokenGenerator = TokenGenerator.getInstance();
         Map<Scope, String> token = tokenGenerator.createAccessToken(Scope.READ);
         token.putAll(tokenGenerator.createAccessToken(Scope.WRITE));
