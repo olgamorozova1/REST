@@ -27,7 +27,6 @@ public class Put extends Request {
 
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             HttpPut putRequest = new HttpPut(readInfoFromProperties("url") + path);
-            getToken();
             putRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
             putRequest.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
             StringEntity entity = new StringEntity(requestBody);

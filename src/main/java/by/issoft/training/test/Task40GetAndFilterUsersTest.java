@@ -7,8 +7,8 @@ import org.junit.jupiter.api.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static by.issoft.training.utils.StringGenerator.generateUserName;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class Task40GetAndFilterUsersTest extends BaseTest {
     static UserDto user1;
@@ -19,9 +19,9 @@ public class Task40GetAndFilterUsersTest extends BaseTest {
 
     @BeforeAll
     public static void prepareData() {
-        user1 = new UserDto(20, "Alex", "MALE");
-        user2 = new UserDto(19, "Anna", "FEMALE");
-        user3 = new UserDto(21, "Kate", "FEMALE");
+        user1 = new UserDto(20, generateUserName(), "MALE");
+        user2 = new UserDto(19, generateUserName(), "FEMALE");
+        user3 = new UserDto(21, generateUserName(), "FEMALE");
         userClient.createUser(user1);
         userClient.createUser(user2);
         userClient.createUser(user3);
@@ -35,12 +35,12 @@ public class Task40GetAndFilterUsersTest extends BaseTest {
         actualUsers = userClient.getUsers();
         Assertions.assertAll(
                 () -> assertEquals(200, userClient.getUsersResponse().getStatusLine().getStatusCode()),
-                () -> assertTrue(actualUsers.containsAll(expectedUsers)));
+                () -> assertTrue(actualUsers.containsAll(expectedUsers), "List of users contains all requested users"));
     }
 
     @Test
     public void getUsersOlderThan() {
-        expectedUsers.add(user2);
+        expectedUsers.add(user1);
         expectedUsers.add(user3);
         actualUsers = userClient.getUsers(ParametersForGetRequest.OLDER_THAN, 20);
         Assertions.assertAll(
@@ -48,7 +48,8 @@ public class Task40GetAndFilterUsersTest extends BaseTest {
                         .getUsersResponse(ParametersForGetRequest.OLDER_THAN, 20)
                         .getStatusLine()
                         .getStatusCode()),
-                () -> assertTrue(actualUsers.containsAll(expectedUsers)));
+                () -> assertTrue(actualUsers.containsAll(expectedUsers), "List of users contains only users with requested parameters"),
+                () -> assertFalse(actualUsers.contains(user2), "List of users contains users without requested parameters"));
     }
 
     @Test
@@ -60,7 +61,9 @@ public class Task40GetAndFilterUsersTest extends BaseTest {
                         .getUsersResponse(ParametersForGetRequest.YOUNGER_THAN, 20)
                         .getStatusLine()
                         .getStatusCode()),
-                () -> assertTrue(actualUsers.containsAll(expectedUsers)));
+                () -> assertTrue(actualUsers.containsAll(expectedUsers)),
+                () -> assertFalse(actualUsers.contains(user1), "List of users contains only users with requested parameters"),
+                () -> assertFalse(actualUsers.contains(user3), "List of users contains users without requested parameters"));
     }
 
     @Test
@@ -73,7 +76,8 @@ public class Task40GetAndFilterUsersTest extends BaseTest {
                         .getUsersResponse(ParametersForGetRequest.SEX, "FEMALE")
                         .getStatusLine()
                         .getStatusCode()),
-                () -> assertTrue(actualUsers.containsAll(expectedUsers)));
+                () -> assertTrue(actualUsers.containsAll(expectedUsers), "List of users contains only users with requested parameters"),
+                () -> assertFalse(actualUsers.contains(user1), "List of users contains users without requested parameters"));
     }
 }
 

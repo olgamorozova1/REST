@@ -2,8 +2,6 @@ package by.issoft.training.test;
 
 import by.issoft.training.objects.UserDto;
 
-import by.issoft.training.utils.StringGenerator;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.*;;
 
@@ -11,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static by.issoft.training.utils.StringGenerator.generateUserName;
+import static by.issoft.training.utils.StringGenerator.generateZipCode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -20,8 +20,8 @@ public class Task20ZipCodesTest extends BaseTest {
 
     @Test
     void getAllZipCodesTest() {
-        expectedListOfZipCodes.add(StringGenerator.generateZipCode());
-        expectedListOfZipCodes.add(StringGenerator.generateZipCode());
+        expectedListOfZipCodes.add(generateZipCode());
+        expectedListOfZipCodes.add(generateZipCode());
         zipCodesClient.expandAvailableZipCodes(expectedListOfZipCodes);
         actualListOfZipCodes = zipCodesClient.getZipCodes();
         Assertions.assertAll(
@@ -31,7 +31,7 @@ public class Task20ZipCodesTest extends BaseTest {
 
     @Test
     void postNewZipCodeTest() {
-        expectedListOfZipCodes.add(StringGenerator.generateZipCode());
+        expectedListOfZipCodes.add(generateZipCode());
         CloseableHttpResponse addZipCodeResponse = zipCodesClient.expandAvailableZipCodes(expectedListOfZipCodes);
         actualListOfZipCodes = zipCodesClient.getZipCodes();
         Assertions.assertAll(
@@ -41,8 +41,8 @@ public class Task20ZipCodesTest extends BaseTest {
 
     @Test
     void postDuplicatedZipCode() {
-        String newZipCode = StringGenerator.generateZipCode();
-        String duplicatedZipCode = StringGenerator.generateZipCode();
+        String newZipCode = generateZipCode();
+        String duplicatedZipCode = generateZipCode();
         expectedListOfZipCodes.add(duplicatedZipCode);
         zipCodesClient.expandAvailableZipCodes(expectedListOfZipCodes);
         expectedListOfZipCodes.add(newZipCode);
@@ -56,8 +56,8 @@ public class Task20ZipCodesTest extends BaseTest {
 
     @Test
     void postAlreadyUsedZipCode() {
-        String usedZipCode = StringGenerator.generateZipCode();
-        UserDto userDto = new UserDto(20, "Alex", "MALE", usedZipCode);
+        String usedZipCode = generateZipCode();
+        UserDto userDto = new UserDto(20, generateUserName(), "MALE", usedZipCode);
         userClient.createUser(userDto);
         expectedListOfZipCodes.add(usedZipCode);
         CloseableHttpResponse addUsedZipCodeResponse = zipCodesClient.expandAvailableZipCodes(expectedListOfZipCodes);

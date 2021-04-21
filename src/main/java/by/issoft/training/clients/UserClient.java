@@ -30,22 +30,22 @@ public class UserClient {
         return JsonConverter.convertHttpEntityToObject(responseBodyEntity, UserDto.class);
     }
 
-    public List<UserDto> getUsers(ParametersForGetRequest parameters, String value) {
-        HttpEntity responseBodyEntity = getUsersResponse(parameters, value).getEntity();
+    public List<UserDto> getUsers(ParametersForGetRequest parameters, String sex) {
+        HttpEntity responseBodyEntity = getUsersResponse(parameters, sex).getEntity();
         return JsonConverter.convertHttpEntityToObject(responseBodyEntity, UserDto.class);
     }
 
-    public List<UserDto> getUsers(ParametersForGetRequest parameters, int value) {
-        HttpEntity responseBodyEntity = getUsersResponse(parameters, value).getEntity();
+    public List<UserDto> getUsers(ParametersForGetRequest parameters, int age) {
+        HttpEntity responseBodyEntity = getUsersResponse(parameters, age).getEntity();
         return JsonConverter.convertHttpEntityToObject(responseBodyEntity, UserDto.class);
     }
 
-    public CloseableHttpResponse getUsersResponse(ParametersForGetRequest parameters, String value) {
-        return get.executeRequest("/users", parameters, value);
+    public CloseableHttpResponse getUsersResponse(ParametersForGetRequest parameters, String sex) {
+        return get.getUsersWithSexParameter("/users", parameters, sex);
     }
 
-    public CloseableHttpResponse getUsersResponse(ParametersForGetRequest parameters, int value) {
-        return get.executeRequest("/users", parameters, value);
+    public CloseableHttpResponse getUsersResponse(ParametersForGetRequest parameters, Integer age) {
+        return get.getUsersWithAgeParameter("/users", parameters, age);
     }
 
     public CloseableHttpResponse updateUserEntirely(UpdateUserDto updateUserDto) {

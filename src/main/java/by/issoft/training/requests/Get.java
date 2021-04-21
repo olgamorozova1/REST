@@ -32,11 +32,16 @@ public class Get extends Request {
         return response;
     }
 
-    public CloseableHttpResponse executeRequest(String path, ParametersForGetRequest parameter, String value) {
+    public CloseableHttpResponse executeRequest(String path, ParametersForGetRequest parameter, Integer age, String sex) {
         try {
             CloseableHttpClient httpclient = HttpClients.createDefault();
             URIBuilder builder = new URIBuilder(readInfoFromProperties("url") + path);
-            builder.setParameter(parameter.getParamStringValue(), value);
+            if (age!=null) {
+                builder.addParameter(parameter.getParamStringValue(), Integer.toString(age));
+            }
+            if (sex!=null) {
+                builder.addParameter(parameter.getParamStringValue(), sex);
+            }
             getRequest = new HttpGet(builder.build());
             setAuthHeader();
             response = httpclient.execute(getRequest);
@@ -46,22 +51,15 @@ public class Get extends Request {
         return response;
     }
 
-    public CloseableHttpResponse executeRequest(String path, ParametersForGetRequest parameter, int value) {
-        try {
-            CloseableHttpClient httpclient = HttpClients.createDefault();
-            URIBuilder builder = new URIBuilder(readInfoFromProperties("url") + path);
-            builder.setParameter(parameter.getParamStringValue(), Integer.toString(value));
-            getRequest = new HttpGet(builder.build());
-            setAuthHeader();
-            response = httpclient.execute(getRequest);
-        } catch (IOException | URISyntaxException ioException) {
-            ioException.printStackTrace();
-        }
-        return response;
+    public CloseableHttpResponse getUsersWithSexParameter (String path, ParametersForGetRequest parameter, String sex) {
+        return executeRequest(path, parameter, null, sex);
+    }
+
+    public CloseableHttpResponse getUsersWithAgeParameter (String path, ParametersForGetRequest parameter, Integer age) {
+        return executeRequest(path, parameter, age, null);
     }
 
     public void setAuthHeader() {
-        getToken();
         getRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
     }
 }

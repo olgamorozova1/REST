@@ -13,15 +13,15 @@ public abstract class Request {
 
     public Request(Scope scope) {
         this.scope = scope;
+        authHeader = getToken();
     }
 
     public abstract CloseableHttpResponse executeRequest(String path);
 
-    public String getToken() {
+    private String getToken() {
         TokenGenerator tokenGenerator = TokenGenerator.getInstance();
         Map<Scope, String> token = tokenGenerator.createAccessToken(Scope.READ);
         token.putAll(tokenGenerator.createAccessToken(Scope.WRITE));
-        authHeader = "Bearer " + token.get(scope);
-        return authHeader;
+        return "Bearer " + token.get(scope);
     }
 }

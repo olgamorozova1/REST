@@ -38,10 +38,7 @@ public class JsonConverter {
     public static <T> List<T> convertHttpEntityToObject(HttpEntity responseBodyEntity, Class<T> tClass) {
         List<T> listOfObjects = null;
         try {
-            String responseBodyString = EntityUtils.toString(responseBodyEntity);
-            listOfObjects = mapper.readValue(responseBodyString, mapper
-                    .getTypeFactory()
-                    .constructCollectionType(List.class, tClass));
+            listOfObjects = convertJsonToObject(EntityUtils.toString(responseBodyEntity), tClass);
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }

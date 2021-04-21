@@ -26,7 +26,6 @@ public class Patch extends Request {
     public CloseableHttpResponse executeRequest(String path) {
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             HttpPatch patchRequest = new HttpPatch(readInfoFromProperties("url") + path);
-            getToken();
             patchRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
             patchRequest.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
             StringEntity entity = new StringEntity(requestBody);

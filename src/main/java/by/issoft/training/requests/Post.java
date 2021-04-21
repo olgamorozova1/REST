@@ -27,7 +27,6 @@ public class Post extends Request {
 
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             HttpPost postRequest = new HttpPost(readInfoFromProperties("url") + path);
-            getToken();
             postRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
             postRequest.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
             StringEntity entity = new StringEntity(requestBody);
