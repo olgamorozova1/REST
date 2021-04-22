@@ -1,0 +1,32 @@
+1. Parameter olderThen for GET request does not include users with age equal to olderThen value.
+Precondition:
+Start application.
+Steps to reproduce:
+1. Send POST request to get access token with read scope to endpoint /oauth/token:
+POST http://localhost:49000/oauth/token
+Header:
+Authorization: Basic MG9hMTU3dHZ0dWdmRlhFaFU0eDc6WDdlQkNYcWxGQzd4LW1qeEc1SDkxSVJ2X0JxZTFvcTdad1hOQThhcQ==
+Request Body:
+grant_type: "client_credentials"
+scope: "read"
+2. Send POST request to get access token with "write" scope to endpoint /oauth/token.
+3. Send POST request to create user with some age (use token with "write" scope).
+   POST http://localhost:49000/users
+   Header:
+   Authorization: Bearer XXXX
+   Content-Type: application/json
+   Request Body:
+   {
+     "age": 20,
+     "name": "ola",
+     "sex": "FEMALE",
+     "zipCode": "ABCDE"
+   }
+5. Send GET request to /users with olderThen parameter:
+    GET GET http://localhost:49000/users?olderThan=20
+    Header:
+    Authorization: Bearer XXXX
+    (where XXXX is token from the 1st step)
+6. Verify list of users.
+Actual result: list of users does not include users with age 20.
+Expected result: list of users include users with age 20.

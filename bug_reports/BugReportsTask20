@@ -1,0 +1,82 @@
+1. Incorrect status code is received on GET request for zip codes.
+Precondition:
+Start application.
+Steps to reproduce:
+1. Send POST request to get access token with read scope to endpoint /oauth/token:
+POST http://localhost:49000/oauth/token
+Header:
+Authorization: Basic MG9hMTU3dHZ0dWdmRlhFaFU0eDc6WDdlQkNYcWxGQzd4LW1qeEc1SDkxSVJ2X0JxZTFvcTdad1hOQThhcQ==
+Request Body:
+grant_type: "client_credentials"
+scope: "read"
+2. Send GET request to /zip-codes:
+GET http://localhost:49000/zip-codes
+Header:
+Authorization: Bearer XXXX
+(where XXXX is token from the 1st step)
+3. Verify status code of the response.
+Actual result: response code is 201.
+Expected result: response code is 200.
+__________________________________________________________________
+2. Duplicated ZIP code is added to the list of available ZIP codes.
+Precondition:
+Start application.
+Steps to reproduce:
+1. Send POST request to get access token with read scope to endpoint /oauth/token:
+POST http://localhost:49000/oauth/token
+Header:
+Authorization: Basic MG9hMTU3dHZ0dWdmRlhFaFU0eDc6WDdlQkNYcWxGQzd4LW1qeEc1SDkxSVJ2X0JxZTFvcTdad1hOQThhcQ==
+Request Body:
+grant_type: "client_credentials"
+scope: "read"
+2. Send GET request to /zip-codes to receive all available zip codes:
+GET http://localhost:49000/zip-codes
+Header:
+Authorization: Bearer XXXX
+(where XXXX is token from the 1st step)
+3. Send POST request to get access token with "write" scope to endpoint /oauth/token.
+4. Send POST request to the endpoint /zip-codes/expand with ZIP code value from response from step 2 (use token with "write" scope),
+for example "12345":
+POST http://localhost:49000/zip-codes/expand
+Authorization: Bearer XXXX
+Content-Type: application/json
+Request Body:
+[
+  "12345"
+]
+4. Verify list of available ZIP codes by sending GET request to /zip-codes.
+Actual result: list of available ZIP codes does not contain duplicated ZIP code.
+Expected result: duplicated ZIP code was added to the list.
+___________________________________________________________________________
+3. Already used ZIP code could be added to the list of available ZIP codes.
+Precondition:
+Start application.
+Steps to reproduce:
+1. Send POST request to get access token with read scope to endpoint /oauth/token:
+POST http://localhost:49000/oauth/token
+Header:
+Authorization: Basic MG9hMTU3dHZ0dWdmRlhFaFU0eDc6WDdlQkNYcWxGQzd4LW1qeEc1SDkxSVJ2X0JxZTFvcTdad1hOQThhcQ==
+Request Body:
+grant_type: "client_credentials"
+scope: "read"
+2. GET request to /zip-codes to retrieve all available ZIP codes.
+GET http://localhost:49000/zip-codes
+Header:
+Authorization: Bearer XXXX
+(where XXXX is token from the 1st step)
+3. Send POST request to get access token with "write" scope to endpoint /oauth/token.
+4. Send POST request to add userDto with one of the ZIP codes from previous step (use token with "write" scope).
+POST http://localhost:49000/userDtos
+Header:
+Authorization: Bearer XXXX
+Content-Type: application/json
+Request Body:
+{
+  "age": 20,
+  "name": "ola",
+  "sex": "FEMALE",
+  "zipCode": "ABCDE"
+}
+4. Sent GET request to /zip-codes to verify available ZIP codes.
+Actual result: already used ZIP code is added to the list.
+Expected result: already used ZIP code is not added.
