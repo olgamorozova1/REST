@@ -15,6 +15,7 @@ public class UserClient {
     Get get = new Get(Scope.READ);
     Put put = new Put(Scope.WRITE);
     Patch patch = new Patch(Scope.WRITE);
+    Delete delete = new Delete(Scope.WRITE);
 
     public CloseableHttpResponse createUser(UserDto userDto) {
         post.setRequestBody(JsonConverter.convertObjectToJson(userDto));
@@ -56,5 +57,10 @@ public class UserClient {
     public CloseableHttpResponse updateUserPartially(UpdateUserDto updateUserDto) {
         patch.setRequestBody(JsonConverter.convertObjectToJson(updateUserDto));
         return patch.executeRequest("/users");
+    }
+
+    public CloseableHttpResponse deleteUser(UserDto user) {
+        delete.setRequestBody(JsonConverter.convertObjectToJson(user));
+        return delete.executeRequest("/users");
     }
 }
