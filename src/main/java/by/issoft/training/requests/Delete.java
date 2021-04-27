@@ -13,9 +13,15 @@ import static by.issoft.training.utils.PropertiesReader.readInfoFromProperties;
 
 public class Delete extends Request {
     private String requestBody;
+    private String contentType;
 
-    public Delete(Scope scope) {
+    public Delete(Scope scope, String contentType) {
         super(scope);
+        this.contentType = contentType;
+    }
+
+    public String getContentType() {
+        return contentType;
     }
 
     public void setRequestBody(String requestBody) {
@@ -26,7 +32,7 @@ public class Delete extends Request {
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             HttpDeleteWithBody deleteRequest = new HttpDeleteWithBody(readInfoFromProperties("url") + path);
             deleteRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
-            deleteRequest.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+            deleteRequest.setHeader(HttpHeaders.CONTENT_TYPE, getContentType());
             StringEntity entity = new StringEntity(requestBody);
             deleteRequest.setEntity(entity);
             response = httpclient.execute(deleteRequest);

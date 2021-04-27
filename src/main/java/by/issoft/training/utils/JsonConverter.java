@@ -2,6 +2,7 @@ package by.issoft.training.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 
@@ -13,14 +14,22 @@ import java.util.List;
 public class JsonConverter {
     static ObjectMapper mapper = new ObjectMapper();
 
-    public static String convertObjectToJson(Object user) {
-        String json = null;
+    public static String convertObjectToJson(Object object) {
+        return convertObjectToStringFormat(object, mapper);
+    }
+
+    public static String convertObjectToXml(Object object) {
+        return convertObjectToStringFormat(object, new XmlMapper());
+    }
+
+    private static String convertObjectToStringFormat(Object object, ObjectMapper mapper) {
+        String value = null;
         try {
-            json = mapper.writeValueAsString(user);
+            value = mapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        return json;
+        return value;
     }
 
     public static <T> List<T> convertJsonToObject(String json, Class<T> tClass) {

@@ -10,15 +10,18 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 
 import java.util.List;
 
+import static by.issoft.training.utils.JsonConverter.convertObjectToJson;
+import static by.issoft.training.utils.JsonConverter.convertObjectToXml;
+
 public class UserClient {
     Post post = new Post(Scope.WRITE);
     Get get = new Get(Scope.READ);
     Put put = new Put(Scope.WRITE);
     Patch patch = new Patch(Scope.WRITE);
-    Delete delete = new Delete(Scope.WRITE);
+    Delete delete;
 
     public CloseableHttpResponse createUser(UserDto userDto) {
-        post.setRequestBody(JsonConverter.convertObjectToJson(userDto));
+        post.setRequestBody(convertObjectToJson(userDto));
         return post.executeRequest("/users");
     }
 
@@ -50,17 +53,22 @@ public class UserClient {
     }
 
     public CloseableHttpResponse updateUserEntirely(UpdateUserDto updateUserDto) {
-        put.setRequestBody(JsonConverter.convertObjectToJson(updateUserDto));
+        put.setRequestBody(convertObjectToJson(updateUserDto));
         return put.executeRequest("/users");
     }
 
     public CloseableHttpResponse updateUserPartially(UpdateUserDto updateUserDto) {
-        patch.setRequestBody(JsonConverter.convertObjectToJson(updateUserDto));
+        patch.setRequestBody(convertObjectToJson(updateUserDto));
         return patch.executeRequest("/users");
     }
 
-    public CloseableHttpResponse deleteUser(UserDto user) {
-        delete.setRequestBody(JsonConverter.convertObjectToJson(user));
+    public CloseableHttpResponse deleteUser(UserDto user, String contentType) {
+        delete = new Delete(Scope.WRITE, contentType);
+        if (contentType.equals("application/xml")) {
+            delete.setRequestBody(convertObjectToXml(user));
+        } else {
+            delete.setRequestBody(convertObjectToJson(user));
+        }
         return delete.executeRequest("/users");
     }
 }
