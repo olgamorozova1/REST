@@ -4,14 +4,14 @@ import by.issoft.training.authorization.Scope;
 import by.issoft.training.objects.UpdateUserDto;
 import by.issoft.training.objects.UserDto;
 import by.issoft.training.requests.*;
-import by.issoft.training.utils.JsonConverter;
+import by.issoft.training.utils.Converter;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 
 import java.util.List;
 
-import static by.issoft.training.utils.JsonConverter.convertObjectToJson;
-import static by.issoft.training.utils.JsonConverter.convertObjectToXml;
+import static by.issoft.training.utils.Converter.convertObjectToJson;
+import static by.issoft.training.utils.Converter.convertObjectToXml;
 
 public class UserClient {
     Post post = new Post(Scope.WRITE);
@@ -31,17 +31,17 @@ public class UserClient {
 
     public List<UserDto> getUsers() {
         HttpEntity responseBodyEntity = getUsersResponse().getEntity();
-        return JsonConverter.convertHttpEntityToObject(responseBodyEntity, UserDto.class);
+        return Converter.convertHttpEntityToObject(responseBodyEntity, UserDto.class);
     }
 
     public List<UserDto> getUsers(ParametersForGetRequest parameters, String sex) {
         HttpEntity responseBodyEntity = getUsersResponse(parameters, sex).getEntity();
-        return JsonConverter.convertHttpEntityToObject(responseBodyEntity, UserDto.class);
+        return Converter.convertHttpEntityToObject(responseBodyEntity, UserDto.class);
     }
 
     public List<UserDto> getUsers(ParametersForGetRequest parameters, int age) {
         HttpEntity responseBodyEntity = getUsersResponse(parameters, age).getEntity();
-        return JsonConverter.convertHttpEntityToObject(responseBodyEntity, UserDto.class);
+        return Converter.convertHttpEntityToObject(responseBodyEntity, UserDto.class);
     }
 
     public CloseableHttpResponse getUsersResponse(ParametersForGetRequest parameters, String sex) {

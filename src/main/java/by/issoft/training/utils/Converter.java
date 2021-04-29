@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public class JsonConverter {
+public class Converter {
     static ObjectMapper mapper = new ObjectMapper();
 
     public static String convertObjectToJson(Object object) {
