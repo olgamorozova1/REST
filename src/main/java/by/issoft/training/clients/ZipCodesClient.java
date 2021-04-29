@@ -3,7 +3,7 @@ package by.issoft.training.clients;
 import by.issoft.training.authorization.Scope;
 import by.issoft.training.requests.Get;
 import by.issoft.training.requests.Post;
-import by.issoft.training.utils.JsonConverter;
+import by.issoft.training.utils.Converter;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
@@ -25,7 +25,7 @@ public class ZipCodesClient {
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
-        return JsonConverter.convertJsonToObject(listOfZipCodes, String.class);
+        return Converter.convertJsonToObject(listOfZipCodes, String.class);
     }
 
     public CloseableHttpResponse getZipCodesResponse() {
@@ -33,7 +33,7 @@ public class ZipCodesClient {
     }
 
     public CloseableHttpResponse expandAvailableZipCodes(List<String> zipCodes) {
-        post.setRequestBody(JsonConverter.convertListOfStringsToJson(zipCodes));
+        post.setRequestBody(Converter.convertListOfStringsToJson(zipCodes));
         return post.executeRequest("/zip-codes/expand");
     }
 

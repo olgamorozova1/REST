@@ -1,0 +1,22 @@
+1. User is not deleted if only required parameters are specified in delete request.
+Precondition:
+Start application.
+Get access tokens with 'write' and 'read' scope.
+Steps to reproduce:
+1. Send POST request to create user to /users endpoint with body.
+   {
+        "age": 20,
+        "name": "Ola",
+        "sex": "FEMALE",
+        "zipCode": "ABCDE"
+   }
+2. Send DELETE request with body to delete user with only required parameters:
+   {
+        "name": "Ola",
+        "sex": "FEMALE"
+   }
+3. Verify list of users by sending GET request to /users endpoint.
+Actual result: user is not deleted and exists in response. If user is created with only required parameters it is deleted.
+So to delete user we have to specify all parameters of user which we want to delete.
+Expected result: user is deleted and does not exist in response. User should be deleted if we specify only required parameters (name and sex)
+even if current user has other parameters like zip code and age as well.
