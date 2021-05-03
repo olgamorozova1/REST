@@ -33,7 +33,7 @@ public class ZipCodesClient {
     }
 
     public CloseableHttpResponse expandAvailableZipCodes(List<String> zipCodes) {
-        post.setRequestBody(Converter.convertListOfStringsToJson(zipCodes));
+        post.setRequestBody(Converter.convertListToJson(zipCodes));
         return post.executeRequest("/zip-codes/expand");
     }
 

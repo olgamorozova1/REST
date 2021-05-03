@@ -1,0 +1,46 @@
+1. 500 error is received when post upload request with header Content-type: "multipart/form-data" is sent.
+Precondition:
+Start application.
+Get access tokens with 'write' scope.
+Steps to reproduce:
+1. Create JSON file with userDto.
+   {
+        "age": 20,
+        "name": "Ola",
+        "sex": "FEMALE",
+        "zipCode": "ABCDE"
+   }
+2. Send POST request with binary Json file body and header Content-type: "multipart/form-data" to upload user.
+Actual result: 500 error is received.
+Expected result: 201 response code is received. All users are replaced with users from file.
+______________________________________________________________________________________________________________
+2. Incorrect response code is received when list of users to upload contains invalid data.
+Precondition:
+Start application.
+Get access tokens with 'write' scope.
+Steps to reproduce:
+1. Create JSON file with userDto and choose incorrect ZIP code or leave name or sex empty.
+   {
+        "age": 20,
+        "name": "Ola",
+        "sex": "FEMALE",
+        "zipCode": "Incorrect zip code"
+   }
+2. Send POST request with binary Json file body to upload user.
+Actual result: 500 response code is received.
+Expected result: if list of users contains user with invalid zip code 424 response code is received.
+If list of users contains user without name or sex code 409 response code is received
+______________________________________________________________________________________________________________
+3. List of users is replaced if request to upload user has invalid data.
+Precondition:
+Start application.
+Get access tokens with 'write' and 'read' scope.
+Steps to reproduce:
+1. Send GET request to /users endpoint to receive list of users before upload.
+2. Create JSON file with 1 user with valid data and another user with invalid data (incorrect ZIP code/empty name or sex).
+[{"age":30,"name":"User_8g3ay","sex":"MALE","zipCode":"GNROOO"},{"age":31,"sex":"FEMALE","zipCode":"L6DAAA"}]
+3. Send POST request with binary Json file body to upload user.
+4. Send GET request to /users endpoint to receive list of users after upload.
+5. Compare lists of user before and after upload.
+Actual result: list of users is replaced with user which had valid data from upload request.
+Expected result: list of users has not changed as upload request contains invalid data.

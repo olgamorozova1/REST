@@ -6,8 +6,11 @@ import by.issoft.training.objects.UserDto;
 import by.issoft.training.requests.*;
 import by.issoft.training.utils.Converter;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.util.EntityUtils;
 
+import java.io.IOException;
 import java.util.List;
 
 import static by.issoft.training.utils.Converter.convertObjectToJson;
@@ -71,4 +74,20 @@ public class UserClient {
         }
         return delete.executeRequest("/users");
     }
+
+    public <T> HttpResponse uploadUsers(List<T> listOfObjects) {
+        return post.executeUploadRequest("/users/upload", listOfObjects);
+    }
+
+    public String getUploadUsersResponseBody(HttpResponse uploadResponse) {
+        HttpEntity responseBodyEntity = uploadResponse.getEntity();
+        String responseString = null;
+        try {
+            responseString = EntityUtils.toString(responseBodyEntity);
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+        return responseString;
+    }
+
 }
