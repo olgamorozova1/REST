@@ -46,7 +46,7 @@ public class Post extends Request {
         return response;
     }
 
-    public <T> HttpResponse executeUploadRequest(String path, List<T> listOfObjects) {
+    public HttpResponse executeUploadRequest(String path, List<?> listOfObjects) {
         HttpResponse uploadResponse = null;
         try {
             HttpClient httpclient = HttpClients.createDefault();

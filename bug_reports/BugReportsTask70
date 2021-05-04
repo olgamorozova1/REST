@@ -1,20 +1,4 @@
-1. 500 error is received when post upload request with header Content-type: "multipart/form-data" is sent.
-Precondition:
-Start application.
-Get access tokens with 'write' scope.
-Steps to reproduce:
-1. Create JSON file with userDto.
-   {
-        "age": 20,
-        "name": "Ola",
-        "sex": "FEMALE",
-        "zipCode": "ABCDE"
-   }
-2. Send POST request with binary Json file body and header Content-type: "multipart/form-data" to upload user.
-Actual result: 500 error is received.
-Expected result: 201 response code is received. All users are replaced with users from file.
-______________________________________________________________________________________________________________
-2. Incorrect response code is received when list of users to upload contains invalid data.
+1. Incorrect response code is received when list of users to upload contains invalid data.
 Precondition:
 Start application.
 Get access tokens with 'write' scope.
@@ -31,7 +15,7 @@ Actual result: 500 response code is received.
 Expected result: if list of users contains user with invalid zip code 424 response code is received.
 If list of users contains user without name or sex code 409 response code is received
 ______________________________________________________________________________________________________________
-3. List of users is replaced if request to upload user has invalid data.
+2. List of users is replaced if request to upload user has invalid data.
 Precondition:
 Start application.
 Get access tokens with 'write' and 'read' scope.

@@ -75,7 +75,7 @@ public class UserClient {
         return delete.executeRequest("/users");
     }
 
-    public <T> HttpResponse uploadUsers(List<T> listOfObjects) {
+    public HttpResponse uploadUsers(List<?> listOfObjects) {
         return post.executeUploadRequest("/users/upload", listOfObjects);
     }
 

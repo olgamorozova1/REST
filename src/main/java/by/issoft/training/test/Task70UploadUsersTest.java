@@ -90,4 +90,15 @@ public class Task70UploadUsersTest extends BaseTest {
                 () -> assertEquals(409, uploadResponse.getStatusLine().getStatusCode()),
                 () -> assertTrue(listOfUsersAfterUpload.equals(listOfUsersBeforeUpload)));
     }
+
+    @Test
+    public void sendUploadRequestWithoutFile() {
+        listOfUsersBeforeUpload = userClient.getUsers();
+        uploadResponse = userClient.uploadUsers(null);
+        listOfUsersAfterUpload = userClient.getUsers();
+        Assertions.assertAll(
+                () -> assertEquals(400, uploadResponse.getStatusLine().getStatusCode()),
+                () -> assertTrue(listOfUsersAfterUpload.equals(listOfUsersBeforeUpload)));
+    }
 }
+
