@@ -2,6 +2,8 @@ package by.issoft.training.test;
 
 import by.issoft.training.objects.UserDto;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.Flaky;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.*;;
 
@@ -19,6 +21,8 @@ public class Task20ZipCodesTest extends BaseTest {
     List<String> expectedListOfZipCodes = new ArrayList<>();
 
     @Test
+    @Description(value = "Test checks whether ZIP codes can be get with GET request")
+    @Flaky
     void getAllZipCodesTest() {
         expectedListOfZipCodes.add(generateZipCode());
         expectedListOfZipCodes.add(generateZipCode());
@@ -30,6 +34,7 @@ public class Task20ZipCodesTest extends BaseTest {
     }
 
     @Test
+    @Description(value = "Test checks whether new ZIP codes can be added")
     void postNewZipCodeTest() {
         expectedListOfZipCodes.add(generateZipCode());
         CloseableHttpResponse addZipCodeResponse = zipCodesClient.expandAvailableZipCodes(expectedListOfZipCodes);
@@ -40,6 +45,8 @@ public class Task20ZipCodesTest extends BaseTest {
     }
 
     @Test
+    @Description(value = "Test checks whether duplicated ZIP codes can be added")
+    @Flaky
     void postDuplicatedZipCode() {
         String newZipCode = generateZipCode();
         String duplicatedZipCode = generateZipCode();
@@ -55,6 +62,8 @@ public class Task20ZipCodesTest extends BaseTest {
     }
 
     @Test
+    @Description(value = "Test checks whether already used ZIP code can be added")
+    @Flaky
     void postAlreadyUsedZipCode() {
         String usedZipCode = generateZipCode();
         UserDto userDto = new UserDto(20, generateUserName(), "MALE", usedZipCode);

@@ -1,6 +1,8 @@
 package by.issoft.training.test;
 
 import by.issoft.training.objects.UserDto;
+import io.qameta.allure.Description;
+import io.qameta.allure.Flaky;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +35,8 @@ public class Task60DeleteUserTest extends BaseTest {
     }
 
     @ParameterizedTest
+    @Description(value = "Test checks whether user is deleted after DELETE request where all user parameters are specified, " +
+            "response code on delete request, and whether zip code gets to the list of available zip codes when user is deleted")
     @ValueSource(strings = {"application/json", "application/xml"})
     public void deleteUser(String contentType) {
         deleteResponse = userClient.deleteUser(user, contentType);
@@ -46,6 +50,9 @@ public class Task60DeleteUserTest extends BaseTest {
     }
 
     @ParameterizedTest
+    @Description(value = "Test checks whether user is deleted after DELETE request where only required parameters are specified, response code on delete request " +
+            "and whether zip code gets to the list of available zip codes when user is deleted")
+    @Flaky
     @ValueSource(strings = {"application/json", "application/xml"})
     public void deleteUserRequestWithOnlyRequiredFields(String contentType) {
         userToDelete = new UserDto();
@@ -62,6 +69,8 @@ public class Task60DeleteUserTest extends BaseTest {
     }
 
     @ParameterizedTest
+    @Description(value = "Test checks whether user is deleted after DELETE request where user name is not specified, " +
+            "response code on delete request and whether zip code from failed delete request returned back to the list of available zip codes")
     @ValueSource(strings = {"application/json", "application/xml"})
     public void deleteUserRequestWithoutNameFields(String contentType) {
         userToDelete = new UserDto();
@@ -79,6 +88,8 @@ public class Task60DeleteUserTest extends BaseTest {
     }
 
     @ParameterizedTest
+    @Description(value = "Test checks whether user is deleted after DELETE request where sex field is not specified, response code on delete request and" +
+            "whether zip code from failed delete request returned back to the list of available zip codes")
     @ValueSource(strings = {"application/json", "application/xml"})
     public void deleteUserRequestWithoutSexFields(String contentType) {
         userToDelete = new UserDto();

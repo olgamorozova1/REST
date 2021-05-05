@@ -2,6 +2,8 @@ package by.issoft.training.test;
 
 import by.issoft.training.objects.UserDto;
 import by.issoft.training.requests.ParametersForGetRequest;
+import io.qameta.allure.Description;
+import io.qameta.allure.Flaky;
 import org.junit.jupiter.api.*;
 
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ public class Task40GetAndFilterUsersTest extends BaseTest {
     }
 
     @Test
+    @Description(value = "Test checks whether users can be get via GET request")
     public void getUsers() {
         expectedUsers.add(user1);
         expectedUsers.add(user2);
@@ -39,6 +42,8 @@ public class Task40GetAndFilterUsersTest extends BaseTest {
     }
 
     @Test
+    @Description(value = "Test checks whether users older then specified value can be get via GET request with parameter")
+    @Flaky
     public void getUsersOlderThan() {
         expectedUsers.add(user1);
         expectedUsers.add(user3);
@@ -53,6 +58,7 @@ public class Task40GetAndFilterUsersTest extends BaseTest {
     }
 
     @Test
+    @Description(value = "Test checks whether users younger then specified value can be get via GET request with parameter")
     public void getUsersYoungerThan() {
         expectedUsers.add(user2);
         actualUsers = userClient.getUsers(ParametersForGetRequest.YOUNGER_THAN, 20);
@@ -67,6 +73,7 @@ public class Task40GetAndFilterUsersTest extends BaseTest {
     }
 
     @Test
+    @Description(value = "Test checks whether users with specified sex can be get via GET request with parameter")
     public void getUsersBySex() {
         expectedUsers.add(user2);
         expectedUsers.add(user3);
