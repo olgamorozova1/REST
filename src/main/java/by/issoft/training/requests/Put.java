@@ -1,6 +1,7 @@
 package by.issoft.training.requests;
 
 import by.issoft.training.authorization.Scope;
+import io.qameta.allure.httpclient.AllureHttpClientResponse;
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPut;
@@ -25,7 +26,7 @@ public class Put extends Request {
 
     public CloseableHttpResponse executeRequest(String path) {
 
-        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+        try (CloseableHttpClient httpclient = HttpClients.custom().addInterceptorFirst(new AllureHttpClientResponse()).build()) {
             HttpPut putRequest = new HttpPut(readInfoFromProperties("url") + path);
             putRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
             putRequest.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");

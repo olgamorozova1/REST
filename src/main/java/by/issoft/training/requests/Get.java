@@ -1,6 +1,7 @@
 package by.issoft.training.requests;
 
 import by.issoft.training.authorization.Scope;
+import io.qameta.allure.httpclient.AllureHttpClientResponse;
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -22,7 +23,7 @@ public class Get extends Request {
 
     public CloseableHttpResponse executeRequest(String path) {
         try {
-            CloseableHttpClient httpclient = HttpClients.createDefault();
+            CloseableHttpClient httpclient = HttpClients.custom().addInterceptorFirst(new AllureHttpClientResponse()).build();
             getRequest = new HttpGet(readInfoFromProperties("url") + path);
             setAuthHeader();
             response = httpclient.execute(getRequest);
@@ -34,7 +35,7 @@ public class Get extends Request {
 
     public CloseableHttpResponse executeRequest(String path, ParametersForGetRequest parameter, Integer age, String sex) {
         try {
-            CloseableHttpClient httpclient = HttpClients.createDefault();
+            CloseableHttpClient httpclient = HttpClients.custom().addInterceptorFirst(new AllureHttpClientResponse()).build();
             URIBuilder builder = new URIBuilder(readInfoFromProperties("url") + path);
             if (age!=null) {
                 builder.addParameter(parameter.getParamStringValue(), Integer.toString(age));

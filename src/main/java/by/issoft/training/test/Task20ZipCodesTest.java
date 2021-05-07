@@ -66,6 +66,8 @@ public class Task20ZipCodesTest extends BaseTest {
     @Flaky
     void postAlreadyUsedZipCode() {
         String usedZipCode = generateZipCode();
+        actualListOfZipCodes.add(usedZipCode);
+        zipCodesClient.expandAvailableZipCodes(actualListOfZipCodes);
         UserDto userDto = new UserDto(20, generateUserName(), "MALE", usedZipCode);
         userClient.createUser(userDto);
         expectedListOfZipCodes.add(usedZipCode);

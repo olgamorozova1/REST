@@ -24,7 +24,7 @@ public class UserClient {
     Patch patch = new Patch(Scope.WRITE);
     Delete delete;
 
-    @Step
+    @Step("Create user")
     public CloseableHttpResponse createUser(UserDto userDto) {
         post.setRequestBody(convertObjectToJson(userDto));
         return post.executeRequest("/users");
@@ -34,19 +34,19 @@ public class UserClient {
         return get.executeRequest("/users");
     }
 
-    @Step
+    @Step("Get all users from the application")
     public List<UserDto> getUsers() {
         HttpEntity responseBodyEntity = getUsersResponse().getEntity();
         return Converter.convertHttpEntityToObject(responseBodyEntity, UserDto.class);
     }
 
-    @Step
+    @Step("Get users with specified sex parameter")
     public List<UserDto> getUsers(ParametersForGetRequest parameters, String sex) {
         HttpEntity responseBodyEntity = getUsersResponse(parameters, sex).getEntity();
         return Converter.convertHttpEntityToObject(responseBodyEntity, UserDto.class);
     }
 
-    @Step
+    @Step("Get users with specified age parameter")
     public List<UserDto> getUsers(ParametersForGetRequest parameters, int age) {
         HttpEntity responseBodyEntity = getUsersResponse(parameters, age).getEntity();
         return Converter.convertHttpEntityToObject(responseBodyEntity, UserDto.class);
@@ -60,19 +60,19 @@ public class UserClient {
         return get.getUsersWithAgeParameter("/users", parameters, age);
     }
 
-    @Step
+    @Step("Update user with PUT request")
     public CloseableHttpResponse updateUserEntirely(UpdateUserDto updateUserDto) {
         put.setRequestBody(convertObjectToJson(updateUserDto));
         return put.executeRequest("/users");
     }
 
-    @Step
+    @Step("Update user with PATCH request")
     public CloseableHttpResponse updateUserPartially(UpdateUserDto updateUserDto) {
         patch.setRequestBody(convertObjectToJson(updateUserDto));
         return patch.executeRequest("/users");
     }
 
-    @Step
+    @Step("Delete user")
     public CloseableHttpResponse deleteUser(UserDto user, String contentType) {
         delete = new Delete(Scope.WRITE, contentType);
         if (contentType.equals("application/xml")) {
@@ -83,7 +83,7 @@ public class UserClient {
         return delete.executeRequest("/users");
     }
 
-    @Step
+    @Step("Upload users")
     public HttpResponse uploadUsers(List<?> listOfObjects) {
         return post.executeUploadRequest("/users/upload", listOfObjects);
     }

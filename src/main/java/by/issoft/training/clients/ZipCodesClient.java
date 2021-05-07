@@ -17,7 +17,7 @@ public class ZipCodesClient {
     Post post = new Post(Scope.WRITE);
     Get get = new Get(Scope.READ);
 
-    @Step
+    @Step("Get all available ZIP codes")
     public List<String> getZipCodes() {
         CloseableHttpResponse response = get.executeRequest("/zip-codes");
         HttpEntity responseBodyEntity = response.getEntity();
@@ -34,7 +34,7 @@ public class ZipCodesClient {
         return get.executeRequest("/zip-codes");
     }
 
-    @Step
+    @Step("Add new ZIP code")
     public CloseableHttpResponse expandAvailableZipCodes(List<String> zipCodes) {
         post.setRequestBody(Converter.convertObjectToJson(zipCodes));
         return post.executeRequest("/zip-codes/expand");
