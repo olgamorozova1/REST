@@ -6,9 +6,8 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class Converter {
@@ -54,16 +53,11 @@ public class Converter {
         return listOfObjects;
     }
 
-    public static String convertListOfStringsToJson(List<String> listOfStrings) {
-        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        String json = null;
+    public static void convertListToJsonFile(List<?> list, String pathname) {
         try {
-            mapper.writeValue(byteArrayOutputStream, listOfStrings);
-            byte[] data = byteArrayOutputStream.toByteArray();
-            json = new String(data, StandardCharsets.UTF_8);
+            mapper.writeValue(new File(pathname), list);
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
-        return json;
     }
 }
