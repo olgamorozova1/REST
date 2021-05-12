@@ -1,6 +1,8 @@
 package by.issoft.training.test;
 
 import by.issoft.training.objects.UserDto;
+import io.qameta.allure.Description;
+import io.qameta.allure.Flaky;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,7 @@ public class Task30CreateUserTest extends BaseTest {
     String zipCode;
 
     @Test
+    @Description(value = "Test checks whether user can be created with POST request")
     public void createUser() {
         zipCode = generateZipCode();
         listOfZipCodes.add(zipCode);
@@ -33,6 +36,7 @@ public class Task30CreateUserTest extends BaseTest {
     }
 
     @Test
+    @Description(value = "Test checks whether user with only required parameters specified can be created with POST request")
     public void createUserWithOnlyRequiredField() {
         UserDto newUserWithOnlyRequiredFields = new UserDto(generateUserName(), "FEMALE");
         CloseableHttpResponse createUserResponse = userClient.createUser(newUserWithOnlyRequiredFields);
@@ -43,6 +47,7 @@ public class Task30CreateUserTest extends BaseTest {
     }
 
     @Test
+    @Description(value = "Test checks whether user with invalid ZIP code can be created with POST request")
     public void creteUserWithInvalidZipCode() {
         UserDto userWithInvalidZipCode = new UserDto(24, generateUserName(), "FEMALE", generateZipCode());
         CloseableHttpResponse createUserWithInvalidZIPCodeResponse = userClient.createUser(userWithInvalidZipCode);
@@ -53,6 +58,8 @@ public class Task30CreateUserTest extends BaseTest {
     }
 
     @Test
+    @Description(value = "Test checks whether duplicated user can be created with POST request")
+    @Flaky
     public void createDuplicatedUser() {
         String userName = generateUserName();
         zipCode = generateZipCode();

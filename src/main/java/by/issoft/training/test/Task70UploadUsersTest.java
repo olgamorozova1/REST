@@ -1,6 +1,8 @@
 package by.issoft.training.test;
 
 import by.issoft.training.objects.UserDto;
+import io.qameta.allure.Description;
+import io.qameta.allure.Flaky;
 import org.apache.http.HttpResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +39,7 @@ public class Task70UploadUsersTest extends BaseTest {
     }
 
     @Test
+    @Description(value = "Test checks whether users could be uploaded, response code and body on upload request")
     public void uploadUsers() {
         user2 = new UserDto(31, generateUserName(), "FEMALE", zipCode2);
         listOfUsersToAdd.add(user2);
@@ -44,12 +47,14 @@ public class Task70UploadUsersTest extends BaseTest {
         listOfUsersAfterUpload = userClient.getUsers();
         Assertions.assertAll(
                 () -> assertEquals(201, uploadResponse.getStatusLine().getStatusCode()),
-                () -> assertTrue(listOfUsersAfterUpload.equals(listOfUsersToAdd)),
+                () -> assertTrue(listOfUsersAfterUpload.equals(listOfUsersToAdd), "All users were uploaded"),
                 () -> assertEquals("Number of users = " + Integer.toString(listOfUsersToAdd.size()),
                         userClient.getUploadUsersResponseBody(uploadResponse)));
     }
 
     @Test
+    @Description(value = "Test checks whether users with invalid zip code could be uploaded, response code on upload request")
+    @Flaky
     public void uploadUsersWithInvalidZipCode() {
         listOfUsersBeforeUpload = userClient.getUsers();
         user2 = new UserDto(31, generateUserName(), "FEMALE", "Invalid ZIP code");
@@ -58,10 +63,12 @@ public class Task70UploadUsersTest extends BaseTest {
         listOfUsersAfterUpload = userClient.getUsers();
         Assertions.assertAll(
                 () -> assertEquals(424, uploadResponse.getStatusLine().getStatusCode()),
-                () -> assertTrue(listOfUsersAfterUpload.equals(listOfUsersBeforeUpload)));
+                () -> assertTrue(listOfUsersAfterUpload.equals(listOfUsersBeforeUpload),"List of users has not changed after failed upload request"));
     }
 
     @Test
+    @Description(value = "Test checks whether users without name field could be uploaded, response code on upload request")
+    @Flaky
     public void uploadUsersWithoutName() {
         listOfUsersBeforeUpload = userClient.getUsers();
         user2 = new UserDto();
@@ -73,10 +80,12 @@ public class Task70UploadUsersTest extends BaseTest {
         listOfUsersAfterUpload = userClient.getUsers();
         Assertions.assertAll(
                 () -> assertEquals(409, uploadResponse.getStatusLine().getStatusCode()),
-                () -> assertTrue(listOfUsersAfterUpload.equals(listOfUsersBeforeUpload)));
+                () -> assertTrue(listOfUsersAfterUpload.equals(listOfUsersBeforeUpload), "List of users has not changed after failed upload request"));
     }
 
     @Test
+    @Description(value = "Test checks whether users without sex field could be uploaded, response code on upload request")
+    @Flaky
     public void uploadUsersWithoutSex() {
         listOfUsersBeforeUpload = userClient.getUsers();
         user2 = new UserDto();
@@ -88,17 +97,18 @@ public class Task70UploadUsersTest extends BaseTest {
         listOfUsersAfterUpload = userClient.getUsers();
         Assertions.assertAll(
                 () -> assertEquals(409, uploadResponse.getStatusLine().getStatusCode()),
-                () -> assertTrue(listOfUsersAfterUpload.equals(listOfUsersBeforeUpload)));
+                () -> assertTrue(listOfUsersAfterUpload.equals(listOfUsersBeforeUpload), "List of users has not changed after failed upload request"));
     }
 
     @Test
+    @Description(value = "Test checks whether request without file with users could be sent, response code on upload request")
     public void sendUploadRequestWithoutFile() {
         listOfUsersBeforeUpload = userClient.getUsers();
         uploadResponse = userClient.uploadUsers(null);
         listOfUsersAfterUpload = userClient.getUsers();
         Assertions.assertAll(
                 () -> assertEquals(400, uploadResponse.getStatusLine().getStatusCode()),
-                () -> assertTrue(listOfUsersAfterUpload.equals(listOfUsersBeforeUpload)));
+                () -> assertTrue(listOfUsersAfterUpload.equals(listOfUsersBeforeUpload), "List of users has not changed after failed upload request"));
     }
 }
 
