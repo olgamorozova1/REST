@@ -1,6 +1,7 @@
 package by.issoft.training.requests;
 
 import by.issoft.training.authorization.Scope;
+import io.qameta.allure.httpclient.AllureHttpClientRequest;
 import io.qameta.allure.httpclient.AllureHttpClientResponse;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
@@ -34,7 +35,8 @@ public class Post extends Request {
 
     public CloseableHttpResponse executeRequest(String path) {
 
-        try (CloseableHttpClient httpclient = HttpClients.custom().addInterceptorFirst(new AllureHttpClientResponse()).build()) {
+        try (CloseableHttpClient httpclient = HttpClients.custom().addInterceptorFirst(new AllureHttpClientResponse())
+                .addInterceptorLast(new AllureHttpClientRequest()).build()) {
             HttpPost postRequest = new HttpPost(readInfoFromProperties("url") + path);
             postRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
             postRequest.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
@@ -50,7 +52,8 @@ public class Post extends Request {
     public HttpResponse executeUploadRequest(String path, List<?> listOfObjects) {
         HttpResponse uploadResponse = null;
         try {
-            HttpClient httpclient = HttpClients.custom().addInterceptorFirst(new AllureHttpClientResponse()).build();
+            HttpClient httpclient = HttpClients.custom().addInterceptorFirst(new AllureHttpClientResponse())
+                    .addInterceptorLast(new AllureHttpClientRequest()).build();
             HttpPost postRequest = new HttpPost(readInfoFromProperties("url") + path);
             postRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();

@@ -1,6 +1,7 @@
 package by.issoft.training.requests;
 
 import by.issoft.training.authorization.Scope;
+import io.qameta.allure.httpclient.AllureHttpClientRequest;
 import io.qameta.allure.httpclient.AllureHttpClientResponse;
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -23,7 +24,8 @@ public class Get extends Request {
 
     public CloseableHttpResponse executeRequest(String path) {
         try {
-            CloseableHttpClient httpclient = HttpClients.custom().addInterceptorFirst(new AllureHttpClientResponse()).build();
+            CloseableHttpClient httpclient = HttpClients.custom().addInterceptorFirst(new AllureHttpClientResponse())
+                    .addInterceptorLast(new AllureHttpClientRequest()).build();
             getRequest = new HttpGet(readInfoFromProperties("url") + path);
             setAuthHeader();
             response = httpclient.execute(getRequest);
@@ -35,12 +37,13 @@ public class Get extends Request {
 
     public CloseableHttpResponse executeRequest(String path, ParametersForGetRequest parameter, Integer age, String sex) {
         try {
-            CloseableHttpClient httpclient = HttpClients.custom().addInterceptorFirst(new AllureHttpClientResponse()).build();
+            CloseableHttpClient httpclient = HttpClients.custom().addInterceptorFirst(new AllureHttpClientResponse())
+                    .addInterceptorLast(new AllureHttpClientRequest()).build();
             URIBuilder builder = new URIBuilder(readInfoFromProperties("url") + path);
-            if (age!=null) {
+            if (age != null) {
                 builder.addParameter(parameter.getParamStringValue(), Integer.toString(age));
             }
-            if (sex!=null) {
+            if (sex != null) {
                 builder.addParameter(parameter.getParamStringValue(), sex);
             }
             getRequest = new HttpGet(builder.build());
@@ -52,11 +55,11 @@ public class Get extends Request {
         return response;
     }
 
-    public CloseableHttpResponse getUsersWithSexParameter (String path, ParametersForGetRequest parameter, String sex) {
+    public CloseableHttpResponse getUsersWithSexParameter(String path, ParametersForGetRequest parameter, String sex) {
         return executeRequest(path, parameter, null, sex);
     }
 
-    public CloseableHttpResponse getUsersWithAgeParameter (String path, ParametersForGetRequest parameter, Integer age) {
+    public CloseableHttpResponse getUsersWithAgeParameter(String path, ParametersForGetRequest parameter, Integer age) {
         return executeRequest(path, parameter, age, null);
     }
 

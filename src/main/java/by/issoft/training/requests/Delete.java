@@ -31,7 +31,8 @@ public class Delete extends Request {
     }
 
     public CloseableHttpResponse executeRequest(String path) {
-        try (CloseableHttpClient httpclient = HttpClients.custom().addInterceptorFirst(new AllureHttpClientResponse()).build()) {
+        try (CloseableHttpClient httpclient = HttpClients.custom().addInterceptorFirst(new AllureHttpClientResponse())
+                .addInterceptorLast(new AllureHttpClientRequest()).build()) {
             HttpDeleteWithBody deleteRequest = new HttpDeleteWithBody(readInfoFromProperties("url") + path);
             deleteRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
             deleteRequest.setHeader(HttpHeaders.CONTENT_TYPE, getContentType());
