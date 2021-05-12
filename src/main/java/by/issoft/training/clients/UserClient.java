@@ -6,6 +6,8 @@ import by.issoft.training.objects.UserDto;
 import by.issoft.training.requests.*;
 import by.issoft.training.utils.Converter;
 import io.qameta.allure.Step;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -25,78 +27,70 @@ public class UserClient {
     Delete delete;
 
     @Step("Create user")
-    public CloseableHttpResponse createUser(UserDto userDto) {
+    public int createUser(UserDto userDto) {
         post.setRequestBody(convertObjectToJson(userDto));
-        return post.executeRequest("/users");
-    }
-
-    public CloseableHttpResponse getUsersResponse() {
-        return get.executeRequest("/users");
+        return post.executeRequest("/users").getStatusLine().getStatusCode();
     }
 
     @Step("Get all users from the application")
-    public List<UserDto> getUsers() {
-        HttpEntity responseBodyEntity = getUsersResponse().getEntity();
-        return Converter.convertHttpEntityToObject(responseBodyEntity, UserDto.class);
+    public Pair<Integer, List<UserDto>> getUsers() {
+        return createResponseAndBodyPairFromGetUsersRequest(get.executeRequest("/users"));
     }
 
     @Step("Get users with specified sex parameter")
-    public List<UserDto> getUsers(ParametersForGetRequest parameters, String sex) {
-        HttpEntity responseBodyEntity = getUsersResponse(parameters, sex).getEntity();
-        return Converter.convertHttpEntityToObject(responseBodyEntity, UserDto.class);
+    public Pair<Integer, List<UserDto>> getUsers(ParametersForGetRequest parameters, String sex) {
+        return createResponseAndBodyPairFromGetUsersRequest(get.getUsersWithSexParameter("/users", parameters, sex));
     }
 
     @Step("Get users with specified age parameter")
-    public List<UserDto> getUsers(ParametersForGetRequest parameters, int age) {
-        HttpEntity responseBodyEntity = getUsersResponse(parameters, age).getEntity();
-        return Converter.convertHttpEntityToObject(responseBodyEntity, UserDto.class);
+    public Pair<Integer, List<UserDto>> getUsers(ParametersForGetRequest parameters, int age) {
+        return createResponseAndBodyPairFromGetUsersRequest(get.getUsersWithAgeParameter("/users", parameters, age));
     }
 
-    public CloseableHttpResponse getUsersResponse(ParametersForGetRequest parameters, String sex) {
-        return get.getUsersWithSexParameter("/users", parameters, sex);
-    }
-
-    public CloseableHttpResponse getUsersResponse(ParametersForGetRequest parameters, Integer age) {
-        return get.getUsersWithAgeParameter("/users", parameters, age);
+    public Pair<Integer, List<UserDto>> createResponseAndBodyPairFromGetUsersRequest(CloseableHttpResponse response) {
+        int responseCode = response.getStatusLine().getStatusCode();
+        HttpEntity responseBodyEntity = response.getEntity();
+        List<UserDto> responseBody = Converter.convertHttpEntityToObject(responseBodyEntity, UserDto.class);
+        Pair<Integer, List<UserDto>> responseCodeAndBody = new MutablePair<>(responseCode, responseBody);
+        return responseCodeAndBody;
     }
 
     @Step("Update user with PUT request")
-    public CloseableHttpResponse updateUserEntirely(UpdateUserDto updateUserDto) {
+    public int updateUserEntirely(UpdateUserDto updateUserDto) {
         put.setRequestBody(convertObjectToJson(updateUserDto));
-        return put.executeRequest("/users");
+        return put.executeRequest("/users").getStatusLine().getStatusCode();
     }
 
     @Step("Update user with PATCH request")
-    public CloseableHttpResponse updateUserPartially(UpdateUserDto updateUserDto) {
+    public int updateUserPartially(UpdateUserDto updateUserDto) {
         patch.setRequestBody(convertObjectToJson(updateUserDto));
-        return patch.executeRequest("/users");
+        return patch.executeRequest("/users").getStatusLine().getStatusCode();
     }
 
     @Step("Delete user")
-    public CloseableHttpResponse deleteUser(UserDto user, String contentType) {
+    public int deleteUser(UserDto user, String contentType) {
         delete = new Delete(Scope.WRITE, contentType);
         if (contentType.equals("application/xml")) {
             delete.setRequestBody(convertObjectToXml(user));
         } else {
             delete.setRequestBody(convertObjectToJson(user));
         }
-        return delete.executeRequest("/users");
+        return delete.executeRequest("/users").getStatusLine().getStatusCode();
     }
 
     @Step("Upload users")
-    public HttpResponse uploadUsers(List<?> listOfObjects) {
-        return post.executeUploadRequest("/users/upload", listOfObjects);
-    }
-
-    public String getUploadUsersResponseBody(HttpResponse uploadResponse) {
-        HttpEntity responseBodyEntity = uploadResponse.getEntity();
-        String responseString = null;
+    public Pair<Integer, String> uploadUsers(List<?> listOfObjects) {
+        HttpResponse response = post.executeUploadRequest("/users/upload", listOfObjects);
+        int responseCode = response.getStatusLine().getStatusCode();
+        HttpEntity responseBodyEntity = response.getEntity();
+        String responseBodyString = null;
         try {
-            responseString = EntityUtils.toString(responseBodyEntity);
+            responseBodyString = EntityUtils.toString(responseBodyEntity);
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
-        return responseString;
+        Pair<Integer, String> responseCodeAndBody = new MutablePair<>(responseCode, responseBodyString);
+        return responseCodeAndBody;
     }
 
 }

@@ -4,6 +4,7 @@ import by.issoft.training.objects.UserDto;
 import by.issoft.training.requests.ParametersForGetRequest;
 import io.qameta.allure.Description;
 import io.qameta.allure.Flaky;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.*;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class Task40GetAndFilterUsersTest extends BaseTest {
     static UserDto user3;
     List<UserDto> expectedUsers = new ArrayList<>();
     List<UserDto> actualUsers = new ArrayList<>();
+    Pair<Integer, List<UserDto>> getUsersResponseCodeAndBody;
 
     @BeforeAll
     public static void prepareData() {
@@ -35,9 +37,10 @@ public class Task40GetAndFilterUsersTest extends BaseTest {
         expectedUsers.add(user1);
         expectedUsers.add(user2);
         expectedUsers.add(user3);
-        actualUsers = userClient.getUsers();
+        getUsersResponseCodeAndBody = userClient.getUsers();
+        actualUsers = getUsersResponseCodeAndBody.getRight();
         Assertions.assertAll(
-                () -> assertEquals(200, userClient.getUsersResponse().getStatusLine().getStatusCode()),
+                () -> assertEquals(200, getUsersResponseCodeAndBody.getLeft()),
                 () -> assertTrue(actualUsers.containsAll(expectedUsers), "List of users contains all requested users"));
     }
 
@@ -47,12 +50,10 @@ public class Task40GetAndFilterUsersTest extends BaseTest {
     public void getUsersOlderThan() {
         expectedUsers.add(user1);
         expectedUsers.add(user3);
-        actualUsers = userClient.getUsers(ParametersForGetRequest.OLDER_THAN, 20);
+        getUsersResponseCodeAndBody = userClient.getUsers(ParametersForGetRequest.OLDER_THAN, 20);
+        actualUsers = getUsersResponseCodeAndBody.getRight();
         Assertions.assertAll(
-                () -> assertEquals(200, userClient
-                        .getUsersResponse(ParametersForGetRequest.OLDER_THAN, 20)
-                        .getStatusLine()
-                        .getStatusCode()),
+                () -> assertEquals(200, getUsersResponseCodeAndBody.getLeft()),
                 () -> assertTrue(actualUsers.containsAll(expectedUsers), "List of users contains only users with requested parameters"),
                 () -> assertFalse(actualUsers.contains(user2), "List of users contains users without requested parameters"));
     }
@@ -61,12 +62,10 @@ public class Task40GetAndFilterUsersTest extends BaseTest {
     @Description(value = "Test checks whether users younger then specified value can be get via GET request with parameter")
     public void getUsersYoungerThan() {
         expectedUsers.add(user2);
-        actualUsers = userClient.getUsers(ParametersForGetRequest.YOUNGER_THAN, 20);
+        getUsersResponseCodeAndBody = userClient.getUsers(ParametersForGetRequest.YOUNGER_THAN, 20);
+        actualUsers = getUsersResponseCodeAndBody.getRight();
         Assertions.assertAll(
-                () -> assertEquals(200, userClient
-                        .getUsersResponse(ParametersForGetRequest.YOUNGER_THAN, 20)
-                        .getStatusLine()
-                        .getStatusCode()),
+                () -> assertEquals(200, getUsersResponseCodeAndBody.getLeft()),
                 () -> assertTrue(actualUsers.containsAll(expectedUsers)),
                 () -> assertFalse(actualUsers.contains(user1), "List of users contains only users with requested parameters"),
                 () -> assertFalse(actualUsers.contains(user3), "List of users contains users without requested parameters"));
@@ -77,12 +76,10 @@ public class Task40GetAndFilterUsersTest extends BaseTest {
     public void getUsersBySex() {
         expectedUsers.add(user2);
         expectedUsers.add(user3);
-        actualUsers = userClient.getUsers(ParametersForGetRequest.SEX, "FEMALE");
+        getUsersResponseCodeAndBody = userClient.getUsers(ParametersForGetRequest.SEX, "FEMALE");
+        actualUsers = getUsersResponseCodeAndBody.getRight();
         Assertions.assertAll(
-                () -> assertEquals(200, userClient
-                        .getUsersResponse(ParametersForGetRequest.SEX, "FEMALE")
-                        .getStatusLine()
-                        .getStatusCode()),
+                () -> assertEquals(200, getUsersResponseCodeAndBody.getLeft()),
                 () -> assertTrue(actualUsers.containsAll(expectedUsers), "List of users contains only users with requested parameters"),
                 () -> assertFalse(actualUsers.contains(user1), "List of users contains users without requested parameters"));
     }
