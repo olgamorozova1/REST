@@ -5,7 +5,7 @@ import by.issoft.training.requests.Get;
 import by.issoft.training.requests.Post;
 import by.issoft.training.utils.Converter;
 import io.qameta.allure.Step;
-import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -32,8 +32,7 @@ public class ZipCodesClient {
 
         int responseCode = response.getStatusLine().getStatusCode();
         List<String> responseBody = Converter.convertJsonToObject(listOfZipCodes, String.class);
-        Pair<Integer, List<String>> responseCodeAndBody = new MutablePair<>(responseCode, responseBody);
-        return responseCodeAndBody;
+        return new ImmutablePair<>(responseCode, responseBody);
     }
 
     @Step("Add new ZIP code")
@@ -42,5 +41,4 @@ public class ZipCodesClient {
         CloseableHttpResponse response = post.executeRequest("/zip-codes/expand");
         return response.getStatusLine().getStatusCode();
     }
-
 }

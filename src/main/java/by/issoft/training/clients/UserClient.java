@@ -6,7 +6,7 @@ import by.issoft.training.objects.UserDto;
 import by.issoft.training.requests.*;
 import by.issoft.training.utils.Converter;
 import io.qameta.allure.Step;
-import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -47,12 +47,11 @@ public class UserClient {
         return createResponseAndBodyPairFromGetUsersRequest(get.getUsersWithAgeParameter("/users", parameters, age));
     }
 
-    public Pair<Integer, List<UserDto>> createResponseAndBodyPairFromGetUsersRequest(CloseableHttpResponse response) {
+    private Pair<Integer, List<UserDto>> createResponseAndBodyPairFromGetUsersRequest(CloseableHttpResponse response) {
         int responseCode = response.getStatusLine().getStatusCode();
         HttpEntity responseBodyEntity = response.getEntity();
         List<UserDto> responseBody = Converter.convertHttpEntityToObject(responseBodyEntity, UserDto.class);
-        Pair<Integer, List<UserDto>> responseCodeAndBody = new MutablePair<>(responseCode, responseBody);
-        return responseCodeAndBody;
+        return new ImmutablePair<>(responseCode, responseBody);
     }
 
     @Step("Update user with PUT request")
@@ -89,8 +88,7 @@ public class UserClient {
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
-        Pair<Integer, String> responseCodeAndBody = new MutablePair<>(responseCode, responseBodyString);
-        return responseCodeAndBody;
+        return new ImmutablePair<>(responseCode, responseBodyString);
     }
 
 }
