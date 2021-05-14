@@ -5,7 +5,6 @@ import by.issoft.training.objects.UpdateUserDto;
 import by.issoft.training.objects.UserDto;
 import io.qameta.allure.Description;
 import io.qameta.allure.Flaky;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +25,7 @@ public class Task50UpdateUserTest extends BaseTest {
     String zipCodeBeforeUserUpdate = generateZipCode();
     String zipCodeAfterUserUpdate = generateZipCode();
     List<String> listOfZipCodesAfterUserUpdate = new ArrayList<>();
+    int updateResponseCode;
 
     @BeforeEach
     public void prepareData() {
@@ -37,7 +37,7 @@ public class Task50UpdateUserTest extends BaseTest {
     }
 
     @Test
-    @Description(value ="Test checks:" +
+    @Description(value = "Test checks:" +
             "1. Response code on PUT request to update user with all valid parameters " +
             "2. Whether user is updated after PUT request with all valid parameters " +
             "3. User with parameters before update does not exist in list of users " +
@@ -47,11 +47,11 @@ public class Task50UpdateUserTest extends BaseTest {
     public void updateUserEntirely() {
         userAfterUpdate = new UserDto(17, generateUserName(), "FEMALE", zipCodeBeforeUserUpdate);
         updateUserDto = new UpdateUserDto(userAfterUpdate, userBeforeUpdate);
-        CloseableHttpResponse updateResponse = userClient.updateUserEntirely(updateUserDto);
-        List<UserDto> users = userClient.getUsers();
-        listOfZipCodesAfterUserUpdate = zipCodesClient.getZipCodes();
+        updateResponseCode = userClient.updateUserEntirely(updateUserDto);
+        List<UserDto> users = userClient.getUsers().getRight();
+        listOfZipCodesAfterUserUpdate = zipCodesClient.getZipCodes().getRight();
         Assertions.assertAll(
-                () -> assertEquals(200, updateResponse.getStatusLine().getStatusCode()),
+                () -> assertEquals(200, updateResponseCode),
                 () -> assertTrue(users.contains(userAfterUpdate), "User is updated"),
                 () -> assertFalse(users.contains(userBeforeUpdate), "User which was updated does not exist in list of users"),
                 () -> assertTrue(listOfZipCodesAfterUserUpdate.contains(zipCodeBeforeUserUpdate),
@@ -61,7 +61,7 @@ public class Task50UpdateUserTest extends BaseTest {
     }
 
     @Test
-    @Description(value ="Test checks:" +
+    @Description(value = "Test checks:" +
             "1. Response code on PUT request to update user with invalid ZIP code " +
             "2. User is not updated after PUT request with invalid ZIP code " +
             "3. ZIP code from failed request is returned to the list of available ZIP codes ")
@@ -69,11 +69,11 @@ public class Task50UpdateUserTest extends BaseTest {
     public void updateUserEntirelyToUserWithInvalidZipCode() {
         userAfterUpdate = new UserDto(19, generateUserName(), "FEMALE", generateZipCode());
         updateUserDto = new UpdateUserDto(userAfterUpdate, userBeforeUpdate);
-        CloseableHttpResponse updateResponse = userClient.updateUserEntirely(updateUserDto);
-        List<UserDto> users = userClient.getUsers();
-        listOfZipCodesAfterUserUpdate = zipCodesClient.getZipCodes();
+        updateResponseCode = userClient.updateUserEntirely(updateUserDto);
+        List<UserDto> users = userClient.getUsers().getRight();
+        listOfZipCodesAfterUserUpdate = zipCodesClient.getZipCodes().getRight();
         Assertions.assertAll(
-                () -> assertEquals(424, updateResponse.getStatusLine().getStatusCode()),
+                () -> assertEquals(424, updateResponseCode),
                 () -> assertTrue(users.contains(userBeforeUpdate), "User with parameters before update exists in the list of users"),
                 () -> assertFalse(users.contains(userAfterUpdate), "User is updated"),
                 () -> assertFalse(listOfZipCodesAfterUserUpdate.contains(zipCodeBeforeUserUpdate),
@@ -81,7 +81,7 @@ public class Task50UpdateUserTest extends BaseTest {
     }
 
     @Test
-    @Description(value ="Test checks:" +
+    @Description(value = "Test checks:" +
             "1. Response code on PUT request to update user without name field " +
             "2. User is not updated after PUT request without name field " +
             "3. ZIP code from failed request is returned to the list of available ZIP codes " +
@@ -93,11 +93,11 @@ public class Task50UpdateUserTest extends BaseTest {
         userAfterUpdate.setSex("FEMALE");
         userAfterUpdate.setZipCode(zipCodeAfterUserUpdate);
         updateUserDto = new UpdateUserDto(userAfterUpdate, userBeforeUpdate);
-        CloseableHttpResponse updateResponse = userClient.updateUserEntirely(updateUserDto);
-        List<UserDto> users = userClient.getUsers();
-        listOfZipCodesAfterUserUpdate = zipCodesClient.getZipCodes();
+        updateResponseCode = userClient.updateUserEntirely(updateUserDto);
+        List<UserDto> users = userClient.getUsers().getRight();
+        listOfZipCodesAfterUserUpdate = zipCodesClient.getZipCodes().getRight();
         Assertions.assertAll(
-                () -> assertEquals(409, updateResponse.getStatusLine().getStatusCode()),
+                () -> assertEquals(409, updateResponseCode),
                 () -> assertTrue(users.contains(userBeforeUpdate), "User with parameters before update exists in the list of users"),
                 () -> assertFalse(users.contains(userAfterUpdate), "User is updated"),
                 () -> assertFalse(listOfZipCodesAfterUserUpdate.contains(zipCodeBeforeUserUpdate),
@@ -107,7 +107,7 @@ public class Task50UpdateUserTest extends BaseTest {
     }
 
     @Test
-    @Description(value ="Test checks:" +
+    @Description(value = "Test checks:" +
             "1. Response code on PUT request to update user without sex field " +
             "2. User is not updated after PUT request without name field " +
             "3. ZIP code from failed request is returned to the list of available ZIP codes " +
@@ -119,11 +119,11 @@ public class Task50UpdateUserTest extends BaseTest {
         userAfterUpdate.setAge(15);
         userAfterUpdate.setZipCode(zipCodeAfterUserUpdate);
         updateUserDto = new UpdateUserDto(userAfterUpdate, userBeforeUpdate);
-        CloseableHttpResponse updateResponse = userClient.updateUserEntirely(updateUserDto);
-        List<UserDto> users = userClient.getUsers();
-        listOfZipCodesAfterUserUpdate = zipCodesClient.getZipCodes();
+        updateResponseCode = userClient.updateUserEntirely(updateUserDto);
+        List<UserDto> users = userClient.getUsers().getRight();
+        listOfZipCodesAfterUserUpdate = zipCodesClient.getZipCodes().getRight();
         Assertions.assertAll(
-                () -> assertEquals(409, updateResponse.getStatusLine().getStatusCode()),
+                () -> assertEquals(409, updateResponseCode),
                 () -> assertTrue(users.contains(userBeforeUpdate), "User with parameters before update exists in the list of users"),
                 () -> assertFalse(users.contains(userAfterUpdate), "User is updated"),
                 () -> assertFalse(listOfZipCodesAfterUserUpdate.contains(zipCodeBeforeUserUpdate),
@@ -133,7 +133,7 @@ public class Task50UpdateUserTest extends BaseTest {
     }
 
     @Test
-    @Description(value ="Test checks:" +
+    @Description(value = "Test checks:" +
             "1. Response code on PATCH request to update user with all valid parameters " +
             "2. Whether user is updated after PATCH request with all valid parameters " +
             "3. User with parameters before update does not exist in list of users " +
@@ -142,11 +142,11 @@ public class Task50UpdateUserTest extends BaseTest {
     public void updateUserPartially() {
         userAfterUpdate = new UserDto(27, userBeforeUpdate.getName(), userBeforeUpdate.getSex(), userBeforeUpdate.getZipCode());
         updateUserDto = new UpdateUserDto(userAfterUpdate, userBeforeUpdate);
-        CloseableHttpResponse updateResponse = userClient.updateUserPartially(updateUserDto);
-        List<UserDto> users = userClient.getUsers();
-        listOfZipCodesAfterUserUpdate = zipCodesClient.getZipCodes();
+        updateResponseCode = userClient.updateUserPartially(updateUserDto);
+        List<UserDto> users = userClient.getUsers().getRight();
+        listOfZipCodesAfterUserUpdate = zipCodesClient.getZipCodes().getRight();
         Assertions.assertAll(
-                () -> assertEquals(200, updateResponse.getStatusLine().getStatusCode()),
+                () -> assertEquals(200, updateResponseCode),
                 () -> assertTrue(users.contains(userAfterUpdate), "User is updated"),
                 () -> assertFalse(users.contains(userBeforeUpdate), "User which was updated does not exist in list of users"),
                 () -> assertFalse(listOfZipCodesAfterUserUpdate.contains(zipCodeBeforeUserUpdate),
@@ -154,7 +154,7 @@ public class Task50UpdateUserTest extends BaseTest {
     }
 
     @Test
-    @Description(value ="Test checks:" +
+    @Description(value = "Test checks:" +
             "1. Response code on PATCH request to update user with invalid ZIP code " +
             "2. User is not updated after PATCH request with invalid ZIP code " +
             "3. ZIP code from failed request is returned to the list of available ZIP codes ")
@@ -162,11 +162,11 @@ public class Task50UpdateUserTest extends BaseTest {
     public void updateUserPartiallyToUserWithInvalidZipCode() {
         userAfterUpdate = new UserDto(userBeforeUpdate.getAge(), userBeforeUpdate.getName(), userBeforeUpdate.getSex(), generateZipCode());
         updateUserDto = new UpdateUserDto(userAfterUpdate, userBeforeUpdate);
-        CloseableHttpResponse updateResponse = userClient.updateUserPartially(updateUserDto);
-        List<UserDto> users = userClient.getUsers();
-        listOfZipCodesAfterUserUpdate = zipCodesClient.getZipCodes();
+        updateResponseCode = userClient.updateUserPartially(updateUserDto);
+        List<UserDto> users = userClient.getUsers().getRight();
+        listOfZipCodesAfterUserUpdate = zipCodesClient.getZipCodes().getRight();
         Assertions.assertAll(
-                () -> assertEquals(424, updateResponse.getStatusLine().getStatusCode()),
+                () -> assertEquals(424, updateResponseCode),
                 () -> assertTrue(users.contains(userBeforeUpdate), "User with parameters before update exists in the list of users"),
                 () -> assertFalse(users.contains(userAfterUpdate), "User is updated"),
                 () -> assertFalse(listOfZipCodesAfterUserUpdate.contains(zipCodeBeforeUserUpdate),
@@ -174,7 +174,7 @@ public class Task50UpdateUserTest extends BaseTest {
     }
 
     @Test
-    @Description(value ="Test checks:" +
+    @Description(value = "Test checks:" +
             "1. Response code on PATCH request to update user without name field " +
             "2. User is not updated after PATCH request without name field " +
             "3. ZIP code from failed request is returned to the list of available ZIP codes " +
@@ -186,11 +186,11 @@ public class Task50UpdateUserTest extends BaseTest {
         userAfterUpdate.setSex(userBeforeUpdate.getSex());
         userAfterUpdate.setZipCode(userBeforeUpdate.getZipCode());
         updateUserDto = new UpdateUserDto(userAfterUpdate, userBeforeUpdate);
-        CloseableHttpResponse updateResponse = userClient.updateUserPartially(updateUserDto);
-        List<UserDto> users = userClient.getUsers();
-        listOfZipCodesAfterUserUpdate = zipCodesClient.getZipCodes();
+        updateResponseCode = userClient.updateUserPartially(updateUserDto);
+        List<UserDto> users = userClient.getUsers().getRight();
+        listOfZipCodesAfterUserUpdate = zipCodesClient.getZipCodes().getRight();
         Assertions.assertAll(
-                () -> assertEquals(409, updateResponse.getStatusLine().getStatusCode()),
+                () -> assertEquals(409, updateResponseCode),
                 () -> assertTrue(users.contains(userBeforeUpdate), "User with parameters before update exists in the list of users"),
                 () -> assertFalse(users.contains(userAfterUpdate), "User is updated"),
                 () -> assertFalse(listOfZipCodesAfterUserUpdate.contains(zipCodeBeforeUserUpdate),
@@ -198,7 +198,7 @@ public class Task50UpdateUserTest extends BaseTest {
     }
 
     @Test
-    @Description(value ="Test checks:" +
+    @Description(value = "Test checks:" +
             "1. Response code on PATCH request to update user without sex field " +
             "2. User is not updated after PATCH request without name field " +
             "3. ZIP code from failed request is returned to the list of available ZIP codes " +
@@ -210,11 +210,11 @@ public class Task50UpdateUserTest extends BaseTest {
         userAfterUpdate.setAge(userBeforeUpdate.getAge());
         userAfterUpdate.setZipCode(userBeforeUpdate.getZipCode());
         updateUserDto = new UpdateUserDto(userAfterUpdate, userBeforeUpdate);
-        CloseableHttpResponse updateResponse = userClient.updateUserPartially(updateUserDto);
-        List<UserDto> users = userClient.getUsers();
-        listOfZipCodesAfterUserUpdate = zipCodesClient.getZipCodes();
+        updateResponseCode = userClient.updateUserPartially(updateUserDto);
+        List<UserDto> users = userClient.getUsers().getRight();
+        listOfZipCodesAfterUserUpdate = zipCodesClient.getZipCodes().getRight();
         Assertions.assertAll(
-                () -> assertEquals(409, updateResponse.getStatusLine().getStatusCode()),
+                () -> assertEquals(409, updateResponseCode),
                 () -> assertTrue(users.contains(userBeforeUpdate), "User with parameters before update exists in the list of users"),
                 () -> assertFalse(users.contains(userAfterUpdate), "User is updated"),
                 () -> assertFalse(listOfZipCodesAfterUserUpdate.contains(zipCodeBeforeUserUpdate),

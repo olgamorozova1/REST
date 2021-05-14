@@ -3,7 +3,6 @@ package by.issoft.training.test;
 import by.issoft.training.objects.UserDto;
 import io.qameta.allure.Description;
 import io.qameta.allure.Flaky;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,8 +22,8 @@ public class Task60DeleteUserTest extends BaseTest {
     String zipCode = generateZipCode();
     List<UserDto> listOfUsersAfterDelete = new ArrayList<>();
     List<String> listOfZipCodesAfterUserDelete = new ArrayList<>();
-    CloseableHttpResponse deleteResponse;
     UserDto user;
+    int deleteResponseCode;
 
     @BeforeEach
     public void prepareData() {
@@ -39,11 +38,11 @@ public class Task60DeleteUserTest extends BaseTest {
             "response code on delete request, and whether zip code gets to the list of available zip codes when user is deleted")
     @ValueSource(strings = {"application/json", "application/xml"})
     public void deleteUser(String contentType) {
-        deleteResponse = userClient.deleteUser(user, contentType);
-        listOfUsersAfterDelete = userClient.getUsers();
-        listOfZipCodesAfterUserDelete = zipCodesClient.getZipCodes();
+        deleteResponseCode = userClient.deleteUser(user, contentType);
+        listOfUsersAfterDelete = userClient.getUsers().getRight();
+        listOfZipCodesAfterUserDelete = zipCodesClient.getZipCodes().getRight();
         Assertions.assertAll(
-                () -> assertEquals(204, deleteResponse.getStatusLine().getStatusCode()),
+                () -> assertEquals(204, deleteResponseCode),
                 () -> assertFalse(listOfUsersAfterDelete.contains(user), "User exists after deleting"),
                 () -> assertTrue(listOfZipCodesAfterUserDelete.contains(zipCode),
                         "Zip code gets to the list of available zip codes when user is deleted"));
@@ -58,11 +57,11 @@ public class Task60DeleteUserTest extends BaseTest {
         userToDelete = new UserDto();
         userToDelete.setName(user.getName());
         userToDelete.setSex(user.getSex());
-        deleteResponse = userClient.deleteUser(userToDelete, contentType);
-        listOfUsersAfterDelete = userClient.getUsers();
-        listOfZipCodesAfterUserDelete = zipCodesClient.getZipCodes();
+        deleteResponseCode = userClient.deleteUser(userToDelete, contentType);
+        listOfUsersAfterDelete = userClient.getUsers().getRight();
+        listOfZipCodesAfterUserDelete = zipCodesClient.getZipCodes().getRight();
         Assertions.assertAll(
-                () -> assertEquals(204, deleteResponse.getStatusLine().getStatusCode()),
+                () -> assertEquals(204, deleteResponseCode),
                 () -> assertFalse(listOfUsersAfterDelete.contains(user), "User exists after deleting"),
                 () -> assertTrue(listOfZipCodesAfterUserDelete.contains(zipCode),
                         "Zip code gets to the list of available zip codes when user is deleted"));
@@ -77,11 +76,11 @@ public class Task60DeleteUserTest extends BaseTest {
         userToDelete.setAge(user.getAge());
         userToDelete.setSex(user.getSex());
         userToDelete.setZipCode(user.getZipCode());
-        deleteResponse = userClient.deleteUser(userToDelete, contentType);
-        listOfUsersAfterDelete = userClient.getUsers();
-        listOfZipCodesAfterUserDelete = zipCodesClient.getZipCodes();
+        deleteResponseCode = userClient.deleteUser(userToDelete, contentType);
+        listOfUsersAfterDelete = userClient.getUsers().getRight();
+        listOfZipCodesAfterUserDelete = zipCodesClient.getZipCodes().getRight();
         Assertions.assertAll(
-                () -> assertEquals(409, deleteResponse.getStatusLine().getStatusCode()),
+                () -> assertEquals(409, deleteResponseCode),
                 () -> assertTrue(listOfUsersAfterDelete.contains(user), "User with same age, sex and zip code is not deleted"),
                 () -> assertFalse(listOfZipCodesAfterUserDelete.contains(zipCode),
                         "If delete request fails zip code from this request returned to list of available zip codes"));
@@ -96,11 +95,11 @@ public class Task60DeleteUserTest extends BaseTest {
         userToDelete.setAge(user.getAge());
         userToDelete.setName(user.getName());
         userToDelete.setZipCode(user.getZipCode());
-        deleteResponse = userClient.deleteUser(userToDelete, contentType);
-        listOfUsersAfterDelete = userClient.getUsers();
-        listOfZipCodesAfterUserDelete = zipCodesClient.getZipCodes();
+        deleteResponseCode = userClient.deleteUser(userToDelete, contentType);
+        listOfUsersAfterDelete = userClient.getUsers().getRight();
+        listOfZipCodesAfterUserDelete = zipCodesClient.getZipCodes().getRight();
         Assertions.assertAll(
-                () -> assertEquals(409, deleteResponse.getStatusLine().getStatusCode()),
+                () -> assertEquals(409, deleteResponseCode),
                 () -> assertTrue(listOfUsersAfterDelete.contains(user), "User with same age, sex and zip code is not deleted"),
                 () -> assertFalse(listOfZipCodesAfterUserDelete.contains(zipCode),
                         "If delete request fails zip code from this request returned to list of available zip codes"));

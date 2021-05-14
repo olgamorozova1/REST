@@ -4,7 +4,7 @@ import by.issoft.training.objects.UserDto;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.Flaky;
-import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.*;;
 
 import java.util.ArrayList;
@@ -19,6 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class Task20ZipCodesTest extends BaseTest {
     List<String> actualListOfZipCodes = new ArrayList<>();
     List<String> expectedListOfZipCodes = new ArrayList<>();
+    Pair<Integer, List<String>> responseCodeAndBody;
+    int addZipCodeResponseCode;
 
     @Test
     @Description(value = "Test checks whether ZIP codes can be get with GET request")
@@ -27,9 +29,10 @@ public class Task20ZipCodesTest extends BaseTest {
         expectedListOfZipCodes.add(generateZipCode());
         expectedListOfZipCodes.add(generateZipCode());
         zipCodesClient.expandAvailableZipCodes(expectedListOfZipCodes);
-        actualListOfZipCodes = zipCodesClient.getZipCodes();
+        responseCodeAndBody = zipCodesClient.getZipCodes();
+        actualListOfZipCodes = responseCodeAndBody.getRight();
         Assertions.assertAll(
-                () -> assertEquals(200, zipCodesClient.getZipCodesResponse().getStatusLine().getStatusCode()),
+                () -> assertEquals(200, responseCodeAndBody.getLeft()),
                 () -> assertTrue(actualListOfZipCodes.containsAll(expectedListOfZipCodes)));
     }
 
@@ -37,10 +40,10 @@ public class Task20ZipCodesTest extends BaseTest {
     @Description(value = "Test checks whether new ZIP codes can be added")
     void postNewZipCodeTest() {
         expectedListOfZipCodes.add(generateZipCode());
-        CloseableHttpResponse addZipCodeResponse = zipCodesClient.expandAvailableZipCodes(expectedListOfZipCodes);
-        actualListOfZipCodes = zipCodesClient.getZipCodes();
+        addZipCodeResponseCode = zipCodesClient.expandAvailableZipCodes(expectedListOfZipCodes);
+        actualListOfZipCodes = zipCodesClient.getZipCodes().getRight();
         Assertions.assertAll(
-                () -> assertEquals(201, addZipCodeResponse.getStatusLine().getStatusCode()),
+                () -> assertEquals(201, addZipCodeResponseCode),
                 () -> assertTrue(actualListOfZipCodes.containsAll(expectedListOfZipCodes)));
     }
 
@@ -53,10 +56,10 @@ public class Task20ZipCodesTest extends BaseTest {
         expectedListOfZipCodes.add(duplicatedZipCode);
         zipCodesClient.expandAvailableZipCodes(expectedListOfZipCodes);
         expectedListOfZipCodes.add(newZipCode);
-        CloseableHttpResponse addZipCodeResponse = zipCodesClient.expandAvailableZipCodes(expectedListOfZipCodes);
-        actualListOfZipCodes = zipCodesClient.getZipCodes();
+        addZipCodeResponseCode = zipCodesClient.expandAvailableZipCodes(expectedListOfZipCodes);
+        actualListOfZipCodes = zipCodesClient.getZipCodes().getRight();
         Assertions.assertAll(
-                () -> assertEquals(201, addZipCodeResponse.getStatusLine().getStatusCode()),
+                () -> assertEquals(201, addZipCodeResponseCode),
                 () -> assertTrue(actualListOfZipCodes.contains(newZipCode)),
                 () -> assertEquals(1, Collections.frequency(actualListOfZipCodes, duplicatedZipCode)));
     }
@@ -71,10 +74,10 @@ public class Task20ZipCodesTest extends BaseTest {
         UserDto userDto = new UserDto(20, generateUserName(), "MALE", usedZipCode);
         userClient.createUser(userDto);
         expectedListOfZipCodes.add(usedZipCode);
-        CloseableHttpResponse addUsedZipCodeResponse = zipCodesClient.expandAvailableZipCodes(expectedListOfZipCodes);
-        actualListOfZipCodes = zipCodesClient.getZipCodes();
+        addZipCodeResponseCode = zipCodesClient.expandAvailableZipCodes(expectedListOfZipCodes);
+        actualListOfZipCodes = zipCodesClient.getZipCodes().getRight();
         Assertions.assertAll(
-                () -> assertEquals(201, addUsedZipCodeResponse.getStatusLine().getStatusCode()),
+                () -> assertEquals(201, addZipCodeResponseCode),
                 () -> assertEquals(0, Collections.frequency(actualListOfZipCodes, usedZipCode)));
     }
 }
