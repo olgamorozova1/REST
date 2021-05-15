@@ -1,5 +1,6 @@
 package by.issoft.training.authorization;
 
+import by.issoft.training.requests.HttpConnection;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.binary.Base64;
@@ -46,7 +47,8 @@ public class TokenGenerator {
 
     public Map<Scope, String> createAccessToken(Scope scope) {
         if (!tokensStorage.containsKey(scope)) {
-            try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+            try {
+                CloseableHttpClient httpclient = HttpConnection.getInstance();
                 HttpPost request = new HttpPost(readInfoFromProperties("url") + "/oauth/token");
                 String auth = readInfoFromProperties("user_name") + ":" + readInfoFromProperties("password");
                 byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.ISO_8859_1));

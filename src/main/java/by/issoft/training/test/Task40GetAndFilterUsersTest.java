@@ -1,7 +1,6 @@
 package by.issoft.training.test;
 
 import by.issoft.training.objects.UserDto;
-import by.issoft.training.requests.ParametersForGetRequest;
 import io.qameta.allure.Description;
 import io.qameta.allure.Flaky;
 import org.apache.commons.lang3.tuple.Pair;
@@ -50,7 +49,7 @@ public class Task40GetAndFilterUsersTest extends BaseTest {
     public void getUsersOlderThan() {
         expectedUsers.add(user1);
         expectedUsers.add(user3);
-        getUsersResponseCodeAndBody = userClient.getUsers(ParametersForGetRequest.OLDER_THAN, 20);
+        getUsersResponseCodeAndBody = userClient.getUsers("olderThan", 20, null);
         actualUsers = getUsersResponseCodeAndBody.getRight();
         Assertions.assertAll(
                 () -> assertEquals(200, getUsersResponseCodeAndBody.getLeft()),
@@ -62,7 +61,7 @@ public class Task40GetAndFilterUsersTest extends BaseTest {
     @Description(value = "Test checks whether users younger then specified value can be get via GET request with parameter")
     public void getUsersYoungerThan() {
         expectedUsers.add(user2);
-        getUsersResponseCodeAndBody = userClient.getUsers(ParametersForGetRequest.YOUNGER_THAN, 20);
+        getUsersResponseCodeAndBody = userClient.getUsers("youngerThan", 20, null);
         actualUsers = getUsersResponseCodeAndBody.getRight();
         Assertions.assertAll(
                 () -> assertEquals(200, getUsersResponseCodeAndBody.getLeft()),
@@ -76,7 +75,7 @@ public class Task40GetAndFilterUsersTest extends BaseTest {
     public void getUsersBySex() {
         expectedUsers.add(user2);
         expectedUsers.add(user3);
-        getUsersResponseCodeAndBody = userClient.getUsers(ParametersForGetRequest.SEX, "FEMALE");
+        getUsersResponseCodeAndBody = userClient.getUsers("sex", null, "FEMALE");
         actualUsers = getUsersResponseCodeAndBody.getRight();
         Assertions.assertAll(
                 () -> assertEquals(200, getUsersResponseCodeAndBody.getLeft()),

@@ -1,19 +1,14 @@
 package by.issoft.training.requests;
 
 import by.issoft.training.authorization.Scope;
-import io.qameta.allure.httpclient.AllureHttpClientRequest;
-import io.qameta.allure.httpclient.AllureHttpClientResponse;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,9 +29,7 @@ public class Post extends Request {
     }
 
     public CloseableHttpResponse executeRequest(String path) {
-
-        try (CloseableHttpClient httpclient = HttpClients.custom().addInterceptorFirst(new AllureHttpClientResponse())
-                .addInterceptorLast(new AllureHttpClientRequest()).build()) {
+        try {
             HttpPost postRequest = new HttpPost(readInfoFromProperties("url") + path);
             postRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
             postRequest.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
@@ -52,8 +45,6 @@ public class Post extends Request {
     public HttpResponse executeUploadRequest(String path, List<?> listOfObjects) {
         HttpResponse uploadResponse = null;
         try {
-            HttpClient httpclient = HttpClients.custom().addInterceptorFirst(new AllureHttpClientResponse())
-                    .addInterceptorLast(new AllureHttpClientRequest()).build();
             HttpPost postRequest = new HttpPost(readInfoFromProperties("url") + path);
             postRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();

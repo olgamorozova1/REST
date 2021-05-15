@@ -37,14 +37,9 @@ public class UserClient {
         return createResponseAndBodyPairFromGetUsersRequest(get.executeRequest("/users"));
     }
 
-    @Step("Get users with specified sex parameter")
-    public Pair<Integer, List<UserDto>> getUsers(ParametersForGetRequest parameters, String sex) {
-        return createResponseAndBodyPairFromGetUsersRequest(get.getUsersWithSexParameter("/users", parameters, sex));
-    }
-
-    @Step("Get users with specified age parameter")
-    public Pair<Integer, List<UserDto>> getUsers(ParametersForGetRequest parameters, int age) {
-        return createResponseAndBodyPairFromGetUsersRequest(get.getUsersWithAgeParameter("/users", parameters, age));
+    @Step("Get users with specified parameter")
+    public Pair<Integer, List<UserDto>> getUsers(String parameter, Integer age, String sex) {
+        return createResponseAndBodyPairFromGetUsersRequest(get.executeRequest("/users", parameter, age, sex));
     }
 
     private Pair<Integer, List<UserDto>> createResponseAndBodyPairFromGetUsersRequest(CloseableHttpResponse response) {

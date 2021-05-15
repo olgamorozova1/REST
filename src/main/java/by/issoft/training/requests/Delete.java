@@ -1,13 +1,9 @@
 package by.issoft.training.requests;
 
 import by.issoft.training.authorization.Scope;
-import io.qameta.allure.httpclient.AllureHttpClientRequest;
-import io.qameta.allure.httpclient.AllureHttpClientResponse;
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 
 import java.io.IOException;
 
@@ -31,8 +27,7 @@ public class Delete extends Request {
     }
 
     public CloseableHttpResponse executeRequest(String path) {
-        try (CloseableHttpClient httpclient = HttpClients.custom().addInterceptorFirst(new AllureHttpClientResponse())
-                .addInterceptorLast(new AllureHttpClientRequest()).build()) {
+        try {
             HttpDeleteWithBody deleteRequest = new HttpDeleteWithBody(readInfoFromProperties("url") + path);
             deleteRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
             deleteRequest.setHeader(HttpHeaders.CONTENT_TYPE, getContentType());
