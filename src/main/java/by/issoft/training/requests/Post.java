@@ -3,7 +3,6 @@ package by.issoft.training.requests;
 import by.issoft.training.authorization.Scope;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -42,8 +41,8 @@ public class Post extends Request {
         return response;
     }
 
-    public HttpResponse executeUploadRequest(String path, List<?> listOfObjects) {
-        HttpResponse uploadResponse = null;
+    public CloseableHttpResponse executeUploadRequest(String path, List<?> listOfObjects) {
+        CloseableHttpResponse uploadResponse = null;
         try {
             HttpPost postRequest = new HttpPost(readInfoFromProperties("url") + path);
             postRequest.setHeader(HttpHeaders.AUTHORIZATION, authHeader);

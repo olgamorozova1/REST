@@ -9,7 +9,6 @@ import io.qameta.allure.Step;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
 
@@ -28,8 +27,14 @@ public class UserClient {
 
     @Step("Create user")
     public int createUser(UserDto userDto) {
+        int responseCode = 0;
         post.setRequestBody(convertObjectToJson(userDto));
-        return post.executeRequest("/users").getStatusLine().getStatusCode();
+        try (CloseableHttpResponse response = post.executeRequest("/users")) {
+            responseCode = response.getStatusLine().getStatusCode();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+        return responseCode;
     }
 
     @Step("Get all users from the application")
@@ -46,39 +51,62 @@ public class UserClient {
         int responseCode = response.getStatusLine().getStatusCode();
         HttpEntity responseBodyEntity = response.getEntity();
         List<UserDto> responseBody = Converter.convertHttpEntityToObject(responseBodyEntity, UserDto.class);
+        try {
+            EntityUtils.consume(responseBodyEntity);
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
         return new ImmutablePair<>(responseCode, responseBody);
     }
 
     @Step("Update user with PUT request")
     public int updateUserEntirely(UpdateUserDto updateUserDto) {
+        int responseCode = 0;
         put.setRequestBody(convertObjectToJson(updateUserDto));
-        return put.executeRequest("/users").getStatusLine().getStatusCode();
+        try (CloseableHttpResponse response = put.executeRequest("/users")) {
+            responseCode = response.getStatusLine().getStatusCode();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+        return responseCode;
     }
 
     @Step("Update user with PATCH request")
     public int updateUserPartially(UpdateUserDto updateUserDto) {
+        int responseCode = 0;
         patch.setRequestBody(convertObjectToJson(updateUserDto));
-        return patch.executeRequest("/users").getStatusLine().getStatusCode();
+        try (CloseableHttpResponse response = patch.executeRequest("/users")) {
+            responseCode = response.getStatusLine().getStatusCode();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+        return responseCode;
     }
 
     @Step("Delete user")
     public int deleteUser(UserDto user, String contentType) {
+        int responseCode = 0;
         delete = new Delete(Scope.WRITE, contentType);
         if (contentType.equals("application/xml")) {
             delete.setRequestBody(convertObjectToXml(user));
         } else {
             delete.setRequestBody(convertObjectToJson(user));
         }
-        return delete.executeRequest("/users").getStatusLine().getStatusCode();
+        try (CloseableHttpResponse response = delete.executeRequest("/users")) {
+            responseCode = response.getStatusLine().getStatusCode();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+        return responseCode;
     }
 
     @Step("Upload users")
     public Pair<Integer, String> uploadUsers(List<?> listOfObjects) {
-        HttpResponse response = post.executeUploadRequest("/users/upload", listOfObjects);
-        int responseCode = response.getStatusLine().getStatusCode();
-        HttpEntity responseBodyEntity = response.getEntity();
+        int responseCode = 0;
         String responseBodyString = null;
-        try {
+        try (CloseableHttpResponse response = post.executeUploadRequest("/users/upload", listOfObjects)) {
+            responseCode = response.getStatusLine().getStatusCode();
+            HttpEntity responseBodyEntity = response.getEntity();
             responseBodyString = EntityUtils.toString(responseBodyEntity);
         } catch (IOException ioException) {
             ioException.printStackTrace();

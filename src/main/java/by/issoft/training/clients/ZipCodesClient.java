@@ -21,24 +21,28 @@ public class ZipCodesClient {
 
     @Step("Get all available ZIP codes")
     public Pair<Integer, List<String>> getZipCodes() {
-        CloseableHttpResponse response = get.executeRequest("/zip-codes");
-        HttpEntity responseBodyEntity = response.getEntity();
-        String listOfZipCodes = null;
-        try {
-            listOfZipCodes = EntityUtils.toString(responseBodyEntity);
+        int responseCode = 0;
+        List<String> responseBody = null;
+        try (CloseableHttpResponse response = get.executeRequest("/zip-codes")) {
+            HttpEntity responseBodyEntity = response.getEntity();
+            String listOfZipCodes = EntityUtils.toString(responseBodyEntity);
+            responseCode = response.getStatusLine().getStatusCode();
+            responseBody = Converter.convertJsonToObject(listOfZipCodes, String.class);
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
-
-        int responseCode = response.getStatusLine().getStatusCode();
-        List<String> responseBody = Converter.convertJsonToObject(listOfZipCodes, String.class);
         return new ImmutablePair<>(responseCode, responseBody);
     }
 
     @Step("Add new ZIP code")
     public int expandAvailableZipCodes(List<String> zipCodes) {
         post.setRequestBody(Converter.convertObjectToJson(zipCodes));
-        CloseableHttpResponse response = post.executeRequest("/zip-codes/expand");
-        return response.getStatusLine().getStatusCode();
+        int responseCode = 0;
+        try (CloseableHttpResponse response = post.executeRequest("/zip-codes/expand")) {
+            responseCode = response.getStatusLine().getStatusCode();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+        return responseCode;
     }
 }
